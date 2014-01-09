@@ -47,13 +47,13 @@ while (my $data = $seq_forward->next_dataset) {
 	if($hash{"-seq"}=~m/.*CGTCAATTTT.+TTAA(.*)/){
 	$match=$1;$start=$-[1];
 		if(length($match)>20){
-    		print seq_forward_3_out "\@".$hash{"-id"}.":3 ".$hash{"-desc"}."\n".substr($match,20) ."\n\+\n".substr($hash{"-raw_quality"},$start+20)."\n";
+    		print seq_forward_3_out "\@".$hash{"-id"}.":3 ".$hash{"-desc"}."\n".substr($match,100) ."\n\+\n".substr($hash{"-raw_quality"},$start+100)."\n";
     		$valid_3_ids{$hash{"-id"}}++;
     	}
     }elsif($hash{"-seq"}=~m/.*GTACGTCACAAT.+TTAA(.*)/){
     	$match=$1;$start=$-[1];
     	if(length($match)>20){
-    			print seq_forward_5_out "\@".$hash{"-id"}.":5 ".$hash{"-desc"}."\n".substr($match,20) ."\n\+\n".substr($hash{"-raw_quality"},$start+20)."\n";
+    			print seq_forward_5_out "\@".$hash{"-id"}.":5 ".$hash{"-desc"}."\n".substr($match,100) ."\n\+\n".substr($hash{"-raw_quality"},$start+100)."\n";
     		$valid_5_ids{$hash{"-id"}}++;
     	}
     }else{
