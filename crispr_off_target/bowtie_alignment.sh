@@ -29,18 +29,39 @@ bcftools isec  mut.bcf.gz wt.bcf.gz --complement 1 > mutant.only.variants.vcf
 
 
 
-samtools view -u -q 10 -@ 8 -S F2_S1_L001.sam  | samtools sort -n -@ 8 -o - temp1 | samtools fixmate -r - - | samtools sort -o - temp5 > F2_S1_L001_clean.bam &
-samtools view -u -q 10 -@ 8 -S F3_S2_L001.sam  | samtools sort -n -@ 8 -o - temp2 | samtools fixmate -r - - | samtools sort -o - temp6 > F3_S2_L001_clean.bam &
-samtools view -u -q 10 -@ 8 -S FM7_S3_L001.sam  | samtools sort -n -@ 8 -o - temp3 | samtools fixmate -r - - | samtools sort -o - temp7 > FM7_S3_L001_clean.bam &
-samtools view -u -q 10 -@ 8 -S OreR_S4_L001.sam  | samtools sort -n -@ 8 -o - temp4 | samtools fixmate -r - - | samtools sort -o - temp8 > OreR_S4_L001_clean.bam ;
+samtools view -u -q 10 -@ 8 -S F2_S1_L001.sam  | samtools sort -o - temp5 > F2_S1_L001_clean.bam &
+samtools view -u -q 10 -@ 8 -S F3_S2_L001.sam  | samtools sort -o - temp6 > F3_S2_L001_clean.bam &
+samtools view -u -q 10 -@ 8 -S FM7_S3_L001.sam  | samtools sort -o - temp7 > FM7_S3_L001_clean.bam &
+samtools view -u -q 10 -@ 8 -S OreR_S4_L001.sam  | samtools sort -o - temp8 > OreR_S4_L001_clean.bam ;
 
 
 java -jar /usr/bin/AddOrReplaceReadGroups.jar I=F2_S1_L001_clean.bam O=F2_S1_L001_clean_fixed.bam LB=TruSeqLT PL=Illumina PU=1 SM=F2 &
-java -jar /usr/bin/AddOrReplaceReadGroups.jar I=F3_S2_clean.bam O=F3_S2_L001_clean_fixed.bam LB=TruSeqLT PL=Illumina PU=1 SM=F3 &
+java -jar /usr/bin/AddOrReplaceReadGroups.jar I=F3_S2_L001_clean.bam O=F3_S2_L001_clean_fixed.bam LB=TruSeqLT PL=Illumina PU=1 SM=F3 &
 java -jar /usr/bin/AddOrReplaceReadGroups.jar I=FM7_S3_L001_clean.bam O=FM7_S3_L001_clean_fixed.bam LB=TruSeqLT PL=Illumina PU=1 SM=FM7 &
 java -jar /usr/bin/AddOrReplaceReadGroups.jar I=OreR_S4_L001_clean.bam O=OreR_S4_L001_clean_fixed.bam LB=TruSeqLT PL=Illumina PU=1 SM=OreR ;
 
-samtools index F2_S1_L001_sorted_fixed.bam
-java -Xmx1g -jar /usr/bin/GenomeAnalysisTK.jar -T RealignerTargetCreator -R /Users/b110-mm06/Desktop/Projects/databasefiles/Drosophila_melanogaster.BDGP5.73/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa -I F2_S1_L001_sorted_fixed.bam -o F2_S1_L001.realign.intervals
-java -Xmx4g -jar /usr/bin/GenomeAnalysisTK.jar -I F2_S1_L001_sorted_fixed.bam -R /Users/b110-mm06/Desktop/Projects/databasefiles/Drosophila_melanogaster.BDGP5.73/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa -T IndelRealigner -targetIntervals F2_S1_L001.realign.intervals -o F2_S1_L001_sorted_fixed_realigned.bam
+samtools index F2_S1_L001_clean_fixed.bam & 
+samtools index F3_S2_L001_clean_fixed.bam &
+samtools index FM7_S3_L001_clean_fixed.bam &
+samtools index OreR_S4_L001_clean_fixed.bam ;
 
+java -Xmx1g -jar /usr/bin/GenomeAnalysisTK.jar -T RealignerTargetCreator -R /Users/b110-mm06/Desktop/Projects/databasefiles/Drosophila_melanogaster.BDGP5.73/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa -I F2_S1_L001_clean_fixed.bam -o F2_S1_L001.realign.intervals &
+java -Xmx1g -jar /usr/bin/GenomeAnalysisTK.jar -T RealignerTargetCreator -R /Users/b110-mm06/Desktop/Projects/databasefiles/Drosophila_melanogaster.BDGP5.73/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa -I F3_S2_L001_clean_fixed.bam -o F3_S2_L001.realign.intervals &
+java -Xmx1g -jar /usr/bin/GenomeAnalysisTK.jar -T RealignerTargetCreator -R /Users/b110-mm06/Desktop/Projects/databasefiles/Drosophila_melanogaster.BDGP5.73/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa -I FM7_S3_L001_clean_fixed.bam -o FM7_S3_L001.realign.intervals &
+java -Xmx1g -jar /usr/bin/GenomeAnalysisTK.jar -T RealignerTargetCreator -R /Users/b110-mm06/Desktop/Projects/databasefiles/Drosophila_melanogaster.BDGP5.73/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa -I OreR_S4_L001_clean_fixed.bam -o OreR_S4_L001.realign.intervals ;
+
+
+java -Xmx4g -jar /usr/bin/GenomeAnalysisTK.jar -I F2_S1_L001_clean_fixed.bam -R /Users/b110-mm06/Desktop/Projects/databasefiles/Drosophila_melanogaster.BDGP5.73/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa -T IndelRealigner -targetIntervals F2_S1_L001.realign.intervals -o F2_S1_L001_clean_fixed_realigned.bam &
+java -Xmx4g -jar /usr/bin/GenomeAnalysisTK.jar -I F3_S2_L001_clean_fixed.bam -R /Users/b110-mm06/Desktop/Projects/databasefiles/Drosophila_melanogaster.BDGP5.73/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa -T IndelRealigner -targetIntervals  F3_S2_L001.realign.intervals -o F3_S2_L001_clean_fixed_realigned.bam;
+java -Xmx4g -jar /usr/bin/GenomeAnalysisTK.jar -I FM7_S3_L001_clean_fixed.bam -R /Users/b110-mm06/Desktop/Projects/databasefiles/Drosophila_melanogaster.BDGP5.73/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa -T IndelRealigner -targetIntervals FM7_S3_L001.realign.intervals -o FM7_S3_L001_clean_fixed_realigned.bam &
+java -Xmx4g -jar /usr/bin/GenomeAnalysisTK.jar -I OreR_S4_L001_clean_fixed.bam -R /Users/b110-mm06/Desktop/Projects/databasefiles/Drosophila_melanogaster.BDGP5.73/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa -T IndelRealigner -targetIntervals OreR_S4_L001.realign.intervals -o OreR_S4_L001_clean_fixed_realigned.bam;
+
+java -jar /usr/bin/AddOrReplaceReadGroups.jar I=F2_S1_L001_clean_fixed_realigned.bam O=F2_S1_L001_clean_fixed_realigned_fixed.bam SORT_ORDER=coordinate RGID=F2_S1 RGLB=TruSeqLT RGPL=Illumina RGPU=1 RGSM=F2_S1 CREATE_INDEX=True VALIDATION_STRINGENCY=LENIENT &	
+java -jar /usr/bin/AddOrReplaceReadGroups.jar I=F3_S2_L001_clean_fixed_realigned.bam O=F3_S2_L001_clean_fixed_realigned_fixed.bam SORT_ORDER=coordinate RGID=F3_S2 RGLB=TruSeqLT RGPL=Illumina RGPU=1 RGSM=F3_S2 CREATE_INDEX=True VALIDATION_STRINGENCY=LENIENT &
+java -jar /usr/bin/AddOrReplaceReadGroups.jar I=FM7_S3_L001_clean_fixed_realigned.bam O=FM7_S3_L001_clean_fixed_realigned_fixed.bam SORT_ORDER=coordinate RGID=FM7_S3 RGLB=TruSeqLT RGPL=Illumina RGPU=1 RGSM=FM7_S3 CREATE_INDEX=True VALIDATION_STRINGENCY=LENIENT &
+java -jar /usr/bin/AddOrReplaceReadGroups.jar I=OreR_S4_L001_clean_fixed_realigned.bam O=OreR_S4_L001_clean_fixed_realigned_fixed.bam SORT_ORDER=coordinate RGID=OreR_S4 RGLB=TruSeqLT RGPL=Illumina RGPU=1 RGSM=OreR_S4 CREATE_INDEX=True VALIDATION_STRINGENCY=LENIENT ;
+
+java -jar /usr/bin/GenomeAnalysisTK.jar -R /Users/b110-mm06/Desktop/Projects/databasefiles/Drosophila_melanogaster.BDGP5.73/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa -T UnifiedGenotyper -I F2_S1_L001_clean_fixed_realigned_fixed.bam -o F2_S1_bwt2_GATK.vcf -stand_call_conf 50.0 -stand_emit_conf 10.0 -dcov 500 & 
+java -jar /usr/bin/GenomeAnalysisTK.jar -R /Users/b110-mm06/Desktop/Projects/databasefiles/Drosophila_melanogaster.BDGP5.73/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa -T UnifiedGenotyper -I F3_S2_L001_clean_fixed_realigned_fixed.bam -o F3_S2_bwt2_GATK.vcf -stand_call_conf 50.0 -stand_emit_conf 10.0 -dcov 500 ;
+java -jar /usr/bin/GenomeAnalysisTK.jar -R /Users/b110-mm06/Desktop/Projects/databasefiles/Drosophila_melanogaster.BDGP5.73/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa -T UnifiedGenotyper -I FM7_S3_L001_clean_fixed_realigned_fixed.bam -o FM7_S3_bwt2_GATK.vcf -stand_call_conf 50.0 -stand_emit_conf 10.0 -dcov 500 &
+java -jar /usr/bin/GenomeAnalysisTK.jar -R /Users/b110-mm06/Desktop/Projects/databasefiles/Drosophila_melanogaster.BDGP5.73/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa -T UnifiedGenotyper -I OreR_S4_L001_clean_fixed_realigned_fixed.bam -o OreR_S4_bwt2_GATK.vcf -stand_call_conf 50.0 -stand_emit_conf 10.0 -dcov 500 ;
