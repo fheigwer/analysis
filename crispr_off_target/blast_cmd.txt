@@ -1,0 +1,10 @@
+perl ~/Desktop/analysis/crispr_off_target/final_filter_vcf.pl mutants_only_highqual_samtools.vcf > mutants_only_highqual_samtools_qual_het_DP_X.vcfperl ~/Desktop/analysis/crispr_off_target/final_filter_vcf.pl mutants_only_highqual_samtools.vcf > mutants_only_highqual_samtools_qual_het_DP_X.vcf
+perl ~/Desktop/analysis/crispr_off_target/get_seq_around_variant.pl mutants_only_highqual_samtools_qual_het_DP_X.vcf > mutants_only_highqual_samtools_qual_het_DP_X.fasta
+
+
+#makeblastdb -dbtype nucl -in mutants_only_highqual_samtools_qual_het_DP.fasta -out seqs_around_indels -title seq_around_mutant_indels
+makeblastdb -dbtype nucl -in mutants_only_highqual_samtools_qual_het_DP_X.fasta -out seqs_around_indels_X -title seq_around_mutant_indels_X
+blastn -query crispr_seq.fa  -db seqs_around_indels_X -evalue 1000 -task blastn-short -penalty -1 -reward 1 -outfmt 6 > blast_around_indels_X.tab
+#blastn -query crispr_seq.fa  -db seqs_around_indels -evalue 1000 -task blastn-short -penalty -1 -reward 1 -gapopen 0 -gapextend 2 -outfmt 6 > blast_around_indels.tab
+
+perl ~/Desktop/analysis/crispr_off_target/filter_blast_output.pl blast_around_indels_X.tab
