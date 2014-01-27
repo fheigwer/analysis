@@ -8,6 +8,25 @@ bcftools index FM7_S3_L001.indels.bcf.gz
 bcftools index F3_S2_L001.indels.bcf.gz
 bcftools index F2_S1_L001.indels.bcf.gz
 
+bcftools isec -O b -C F2_S1_L001.indels.bcf.gz OreR_S4_L001.indels.bcf.gz -p . 
+mv 0000.bcf F2_S1_L001.indels.OreR.bcf.gz
+bcftools isec -O b -C F3_S2_L001.indels.bcf.gz OreR_S4_L001.indels.bcf.gz -p . 
+mv 0000.bcf F3_S2_L001.indels.OreR.bcf.gz
+
+bcftools index F2_S1_L001.indels.OreR.bcf.gz
+bcftools index F3_S2_L001.indels.OreR.bcf.gz
+
+bcftools isec -O b F2_S1_L001.indels.OreR.bcf.gz F3_S2_L001.indels.OreR.bcf.gz -p .
+mv 0000.bcf F2_S1_L001.indels.woOreR.woF3.bcf.gz
+mv 0001.bcf F3_S2_L001.indels.woOreR.woF2.bcf.gz
+mv 0002.bcf F2F3_S1_L001.indels.woOreR.bcf.gz
+
+bcftools view -O v F2_S1_L001.indels.woOreR.woF3.bcf.gz > F2_S1_L001.indels.woOreR.woF3.vcf
+bcftools view -O v F3_S2_L001.indels.woOreR.woF2.bcf.gz > F3_S2_L001.indels.woOreR.woF3.vcf
+bcftools view -O v F2F3_S1_L001.indels.woOreR.bcf.gz > F2F3_S1_L001.indels.woOreR.vcf
+
+
+
 bcftools merge -O b OreR_S4_L001.indels.bcf.gz FM7_S3_L001.indels.bcf.gz > wt.bcf.gz
 bcftools merge -O b F3_S2_L001.indels.bcf.gz F2_S1_L001.indels.bcf.gz > mut.bcf.gz
 

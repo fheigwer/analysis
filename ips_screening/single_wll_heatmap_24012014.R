@@ -25,7 +25,8 @@ drop_v <- as.vector(c(
             grep(".*Location_Center_X.*", colnames(TRAINDATA), perl=T),
             grep(".*Location_Center_Y.*", colnames(TRAINDATA), perl=T),
             grep(".*Parent_Nuclei.*", colnames(TRAINDATA), perl=T),
-            grep(".*AreaShape_Center.*", colnames(TRAINDATA), perl=T),
+            grep("AreaShape_Center_X", colnames(TRAINDATA), perl=T),
+            grep("AreaShape_Center_Y", colnames(TRAINDATA), perl=T),
             grep(".*AreaShape_Orientation.*", colnames(TRAINDATA),perl=T),
             grep(".*AreaShape_Compactness.*", colnames(TRAINDATA),perl=T)
             ))
@@ -80,7 +81,7 @@ for(i in as.vector(names(to_drop))){
 
 TRAINED_CLUST <-kmeans(TRAINDATA,6, nstart = 30)
 
-SAMPLE.levels=knn(TRAINDATA, SAMPLE, TRAINED_CLUST$cluster, k = 1000, prob=F) 
+SAMPLE.levels=knn(TRAINDATA, SAMPLE, TRAINED_CLUST$cluster, k = 100, prob=F) 
 
 
 plot(density(as.numeric(TRAINED_CLUST$cluster)),ylim=c(0,0.5),col="green")
@@ -102,7 +103,11 @@ lines(density(as.numeric(SAMPLE.levels)),col="red")
 #dev.new()
 #####################################################################################################################################
 pc=princomp(TRAINDATA)
-sm.density.compare(TRAINDATA[,4], TRAINED_CLUST$cluster, xlab=colnames(TRAINDATA)[4])
+par(mfrow=c(2,7))
+for(i in 1:14){
+	sm.density.compare(TRAINDATA[,i], TRAINED_CLUST$cluster)
+}
+
 plot3d(pc$scores[,c(1,2,3)], col=TRAINED_CLUST$cluster)
 #####################################################################################################################################
 plot(g3_4[1,1:30],type="l",ylim=c(0,1.5))
