@@ -11,7 +11,7 @@ if (!(-d $outfolder)) {
 	system('mkdir '.$outfolder);
 }
 
-start_off_image_analysis ("~/image_analysis/EBImage_pipeline_Mamma.R",$infolder,$outfolder,384,"fld1wvDAPIDAPI.tif","fld1wvCy3Cy3.tif","fld1wvCy5Cy5.tif",40);
+start_off_image_analysis ("~/image_analysis/EBImage_pipeline_Dmel.R",$infolder,$outfolder,384,"fld1wvDAPIDAPI.tif","fld1wvFITCFITCwix1.tif","fld1wvCy5Cy5.tif",40);
 
 
 #########################################################################################
@@ -38,6 +38,7 @@ sub rename_tifs_in_folder {
 	closedir dir;
 	return(1);      
 }
+
 
 #########################################################################################
 #name:      make a new svg and write svg header
@@ -265,7 +266,7 @@ sub add_image_to_svg {
 		my $file=$output_folder."/".$filename."_segmented.tif";
 		$x=@{$coords{$filename}}[0];
 		$y=@{$coords{$filename}}[1];
-		print $output '<image id="'.$filename.'" x="'.$x.'" y="'.$y.'" onmousemove="ShowTooltip(evt,\''.$filename.'\')" onmouseout="HideTooltip()" onclick="window.open(\''.$file.'\',\'_blank\');" onmouseover="this.style.cursor=\'pointer\'" width="'.($tilesize-4).'px" height="'.($tilesize-4).'px" xlink:href="data:image/png;base64,'.$b64.'"></image>'."\n";
+		print $output '<image id="'.$filename.'" x="'.$x.'" y="'.$y.'" onmousemove="ShowTooltip(evt,\''.$filename.'\')" onmouseout="HideTooltip()" onclick="window.open(\''.$filename.'_segmented.tif\',\'_blank\');" onmouseover="this.style.cursor=\'pointer\'" width="'.($tilesize-4).'px" height="'.($tilesize-4).'px" xlink:href="data:image/png;base64,'.$b64.'"></image>'."\n";
 	close $output;
 	return(1);      
 }
@@ -452,7 +453,7 @@ sub add_rect_to_svg {
 		my $file=$output_folder."/".$filename."_segmented.tif";
 		$x=@{$coords{$filename}}[0];
 		$y=@{$coords{$filename}}[1];
-		print $output '<rect x="'.$x.'" y="'.$y.'" width="'.($tilesize-4).'px" height="'.($tilesize-4).'px" style="fill:rgb(0,0,0);" onmousemove="ShowTooltip(evt,\''.$value.'\')" onmouseout="HideTooltip()" onclick="window.open(\''.$file.'\',\'_blank\');" onmouseover="this.style.cursor=\'pointer\'" />'."\n";
+		print $output '<rect x="'.$x.'" y="'.$y.'" width="'.($tilesize-4).'px" height="'.($tilesize-4).'px" style="fill:rgb(0,0,0);" onmousemove="ShowTooltip(evt,\''.$value.'\')" onmouseout="HideTooltip()" onclick="window.open(\''.$filename.'_segmented.tif\',\'_blank\');" onmouseover="this.style.cursor=\'pointer\'" />'."\n";
 	close $output;
 	return(1);      
 }
@@ -589,7 +590,7 @@ sub start_off_image_analysis {
 					delete $Q{$key};
 				}
 			}
-			sleep 30;
+			sleep 10;
 		}
 		$sub_pm->wait_all_children();
 	}else{
@@ -644,7 +645,7 @@ sub start_off_image_analysis {
 					delete $Q{$key};
 				}
 			}
-			sleep 30;
+			sleep 1;
 			combine_to_svg($output_folder);			
 		}
 	}

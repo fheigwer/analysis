@@ -23,7 +23,7 @@ TEST_IMAGE_body=1-(log(TEST_IMAGE_body)/min(log(TEST_IMAGE_body)))
 nuclei_binary=thresh(TEST_IMAGE_nuclei,w=5,h=5,offset=0.09)
 nuclei_binary=fillHull(nuclei_binary)
 cell_bodies_binary= fillHull(thresh(TEST_IMAGE_body,w=30,h=30,offset=0.01))
-nuclei_binary=nuclei_binary*cell_bodies_binary
+#nuclei_binary=nuclei_binary*cell_bodies_binary
 
 nuclei_objects = bwlabel(nuclei_binary)
 
