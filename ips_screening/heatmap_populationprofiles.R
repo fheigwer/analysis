@@ -2,7 +2,12 @@
 name_table=read.table(file="/Users/b110-mm06/Desktop/Projects/ips_kinome_screen/data/Christian_IPSC/10303/wellnames.txt")
 pos_wells=which(name_table[,3]=="pos")
 neg_wells=which(name_table[,3]=="neg")
-load("/Users/b110-mm06/Desktop/Projects/ips_kinome_screen/10403 clustering.RData")
+
+
+
+
+load("/Users/b110-mm06/Desktop/Projects/ips_kinome_screen/10402 clustering.RData")
+load("/Users/b110-mm06/Desktop/Projects/ips_kinome_screen/10402 sample_data.RData")
 
 result=c(0,0,0,0,0,0)
 for(i in as.numeric(levels(factor(clustering[,1])))){
@@ -11,6 +16,21 @@ for(i in as.numeric(levels(factor(clustering[,1])))){
 	result=rbind(result,temp)
 }
 result_sample=result[-1,]
+
+colnames(result_sample)=c("1","2","3","4","5","6")
+
+ panel.smoothy <- function(x,y, ...)
+{    smoothScatter(x,y,add=T)
+}
+
+pairs(result_sample,upper.panel=panel.smoothy,lower.panel=panel.smooth,col=aplha("blue",0.5))
+svg(file="402_heatmap.svg",height=14)
+ pheatmap(result_sample,scale="column",cellwidth=10,cellheight=2,cluster_cols=FALSE,fontsize_row =2,fontsize=6)
+dev.off()
+
+tiff(file="402_populationcount_pairs.tif",width=2024,height=2024)
+	pairs(result_sample,upper.panel=panel.smoothy,lower.panel=NULL,cex.labels=4,cex.axis=3)
+dev.off()
 
 load("/Users/b110-mm06/Desktop/Projects/ips_kinome_screen/10303 clustering_ctrl.RData")
 

@@ -21,16 +21,16 @@ while(my $subdir = readdir($outerdir)){
 		}
 		opendir $innerdir, $indir."/".$subdir;
 		while(my $file = readdir($innerdir)){
-			if($file=~m/(.+)\.csv/){
+			if($file=~m/(DefaultOUT_Nuclei)\.csv/){
 				my $name=$1;
 				open $samplefile, ">".$indir."/".$subdir."/".$name."_sample.tab";
-				open $ctrlfile, ">".$indir."/".$subdir."/".$name."_ctrl.tab";
+			#	open $ctrlfile, ">".$indir."/".$subdir."/".$name."_ctrl.tab";
 				open $infile, $indir."/".$subdir."/".$file;
 				while(<$infile>){
 					my @line=split("\t",$_);
 					#print $line[0]."\n";
-					if(exists($ctrl{$line[0]}) && $line[2]!=1){
-						print $ctrlfile $_;
+					if(exists($ctrl{$line[0]}) && $line[2]!=1  ){#|| int(rand(50))==25){
+						#print $ctrlfile $_;
 					}elsif(exists($sample{$line[0]})){
 						print $samplefile $_;
 					}

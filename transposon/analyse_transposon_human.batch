@@ -1,0 +1,12 @@
+/Users/b110-mm06/Desktop/analysis/transposon/analyse_transposon_human.sh ColoLAP_S8_L001_ &
+/Users/b110-mm06/Desktop/analysis/transposon/analyse_transposon_human.sh ColoOR_S3_L001_ &
+/Users/b110-mm06/Desktop/analysis/transposon/analyse_transposon_human.sh ColoRD_S4_L001_ &
+
+/Users/b110-mm06/Desktop/analysis/transposon/analyse_transposon_human.sh HCTOR_S1_L001_ &
+/Users/b110-mm06/Desktop/analysis/transposon/analyse_transposon_human.sh HCTOTA_S7_L001_ &
+
+/Users/b110-mm06/Desktop/analysis/transposon/analyse_transposon_human.sh HCTTRAIL_S5_L001_ &
+
+
+/Users/b110-mm06/Desktop/analysis/transposon/analyse_transposon_human.sh HCTRD_S2_L001_ &
+/Users/b110-mm06/Desktop/analysis/transposon/analyse_transposon_human.sh HCTCrtl_S6_L001_ &

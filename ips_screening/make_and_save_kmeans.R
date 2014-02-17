@@ -17,20 +17,24 @@ raw_data=raw_data[,-c(drop_v)]
 colnames(raw_data)=names
 correlation_matrix=cor(raw_data,method="spearman")
 
-to_drop=list()
-for(i in 1:dim(correlation_matrix)[1]){
-  temp=correlation_matrix[correlation_matrix[,i]>0.90 ,i]
-  temp=temp[temp<1]
-  for(tempele in names(temp)){
-    to_drop[[tempele]]<-1
-  }
-}
+keep <- c(1,4,20,19,25,26,47,48)
+raw_data=raw_data[,c(keep)]
 
-for(i in as.vector(names(to_drop))){
- if(!is.na(i)){
-   raw_data <- raw_data[,c(which(colnames(raw_data)!=i))]
-  }
-}
+
+#to_drop=list()
+#for(i in 1:dim(correlation_matrix)[1]){
+#  temp=correlation_matrix[correlation_matrix[,i]>0.90 ,i]
+#  temp=temp[temp<1]
+#  for(tempele in names(temp)){
+#    to_drop[[tempele]]<-1
+#  }
+#}
+
+#for(i in as.vector(names(to_drop))){
+# if(!is.na(i)){
+#   raw_data <- raw_data[,c(which(colnames(raw_data)!=i))]
+#  }
+#}
 
  print(raw_clust <-kmeans(raw_data,6, nstart = 30))
  
@@ -43,15 +47,15 @@ for(i in as.vector(names(to_drop))){
 }
 
 save(raw_clust,file="kmeans_result.RData")
+pairs(raw_data,panel=panel.smooth,col=raw_clust$cluster)
 
-
-png(file='raw_data.png')  
+tiff(file='raw_data.tif')  
  pairs(raw_data,panel=panel.smooth,col=raw_clust$cluster)
   
 # Write the file  
 dev.off()  
 
-devSVG(file='raw_data.svg', height=20, width=20, onefile=TRUE)  
+svg(file='raw_data.svg', height=20, width=20, onefile=TRUE)  
   
 # Plot your graph  
  pairs(raw_data,panel=panel.smooth,col=raw_clust$cluster)
@@ -60,7 +64,7 @@ devSVG(file='raw_data.svg', height=20, width=20, onefile=TRUE)
 dev.off()  
 
 
-devSVG(file='pca.svg', height=20, width=20, onefile=TRUE)  
+svg(file='pca.svg', height=20, width=20, onefile=TRUE)  
   
 # Plot your graph  
  pairs(pc$scores,panel=panel.smooth,col=raw_clust$cluster)
@@ -69,7 +73,7 @@ devSVG(file='pca.svg', height=20, width=20, onefile=TRUE)
 dev.off()  
 
 
-png(file='pca.png')  
+tiff(file='pca.tif')  
 
  pairs(pc$scores,panel=panel.smooth,col=raw_clust$cluster)
  
