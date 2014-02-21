@@ -29,8 +29,8 @@ dev.off()
 ################################################################################################################################################################
 for(i in 3:4){
 	for(j in 1:3){
-		load(paste('~/Desktop/Projects/ips_kinome_screen/10',i,'0',j,' sample_data_ctrl.RData',sep=""))
-		load(paste('~/Desktop/Projects/ips_kinome_screen/10',i,'0',j,' clustering_ctrl.RData',sep=""))
+		load(paste('~/Desktop/Projects/ips_kinome_screen/10',i,'0',j,' sample_data_ctrl_ctrltrain.RData',sep=""))
+		load(paste('~/Desktop/Projects/ips_kinome_screen/10',i,'0',j,' clustering_ctrl_ctrltrain.RData',sep=""))
 		colnames(sample_data)=c("Nuclear Area", "Nuclear Extent", "max. Oct4 Intensity", "max. Hoechst Intensity", "ø Hoechst Intensity", "ø Oct4 Intensity", "Distance from first neighbor", "Number of Neighbors")
 		sample=sample(1:(length(clustering[,2])),size=50000)
 		tiff(file=paste("paired_plot_",i,"_",j,"_ctrl.tif",sep=""),width = 2024, height = 2024)
@@ -51,26 +51,26 @@ for(o in 1:8){
 	}
 }
 		################################################################################################################################################################
-		load(paste('~/Desktop/Projects/ips_kinome_screen/10',i,'0',j,' sample_data.RData',sep=""))
-		load(paste('~/Desktop/Projects/ips_kinome_screen/10',i,'0',j,' clustering.RData',sep=""))
-		colnames(sample_data)=c("Nuclear Area", "Nuclear Extent", "max. Oct4 Intensity", "max. Hoechst Intensity", "ø Hoechst Intensity", "ø Oct4 Intensity", "Distance from first neighbor", "Number of Neighbors")
-		sample=sample(1:(length(clustering[,2])),size=50000)
-		tiff(file=paste("paired_plot_",i,"_",j,".tif",sep=""),width = 2024, height = 2024)
-			pairs(sample_data[sample,c(1,2,3,6,4,5,7,8)],col=alpha(clustering[sample,2],0.3),pch=".",lower.panel=NULL,cex=3)
-		dev.off()
-		test=list()
-		for(o in 1:8){
-	for(p in c(1:8)[-o]){
-		for(q in c(1:8)[-c(o,p)]){
-			if(!is.numeric(test[[paste(as.character(sort(c(o,p,q))),collapse = '')]])){
-				tiff(file=paste(colnames(sample_data)[o],"_",colnames(sample_data)[p],"_",colnames(sample_data)[q],"_",i,"_",j,"_ctrl.tif",sep=""),width = 2024, height = 2024)
-						scatterplot3d(sample_data[,o],sample_data[,p],sample_data[,q],mar=c(10,10,10,10),color=alpha(clustering[,2],0.3),box=FALSE,pch=".",xlab=colnames(sample_data)[o],ylab=colnames(sample_data)[p],zlab=colnames(sample_data)[q],cex.symbols=3, cex.axis=3,cex.lab=2.5)
-				dev.off()
-				test[[as.character(paste(as.character(sort(c(o,p,q))),collapse = ''))]]=test[[as.character(paste(as.character(sort(c(o,p,q))),collapse = ''))]]+1
-			}
-		}		
-	}
-}
+#		load(paste('~/Desktop/Projects/ips_kinome_screen/10',i,'0',j,' sample_data.RData',sep=""))
+#		load(paste('~/Desktop/Projects/ips_kinome_screen/10',i,'0',j,' clustering.RData',sep=""))
+#		colnames(sample_data)=c("Nuclear Area", "Nuclear Extent", "max. Oct4 Intensity", "max. Hoechst Intensity", "ø Hoechst Intensity", "ø Oct4 Intensity", "Distance from first neighbor", "Number of Neighbors")
+#		sample=sample(1:(length(clustering[,2])),size=50000)
+#		tiff(file=paste("paired_plot_",i,"_",j,".tif",sep=""),width = 2024, height = 2024)
+#			pairs(sample_data[sample,c(1,2,3,6,4,5,7,8)],col=alpha(clustering[sample,2],0.3),pch=".",lower.panel=NULL,cex=3)
+#		dev.off()
+#		test=list()
+#		for(o in 1:8){
+#			for(p in c(1:8)[-o]){
+#				for(q in c(1:8)[-c(o,p)]){
+#					if(!is.numeric(test[[paste(as.character(sort(c(o,p,q))),collapse = '')]])){
+#						tiff(file=paste(colnames(sample_data)[o],"_",colnames(sample_data)[p],"_",colnames(sample_data)[q],"_",i,"_",j,".tif",sep=""),width = 2024, height = 2024)
+#							scatterplot3d(sample_data[,o],sample_data[,p],sample_data[,q],mar=c(10,10,10,10),color=alpha(clustering[,2],0.3),box=FALSE,pch=".",xlab=colnames(sample_data)[o],ylab=colnames(sample_data)[p],zlab=colnames(sample_data)[q],cex.symbols=3, cex.axis=3,cex.lab=2.5)
+#						dev.off()
+#						test[[as.character(paste(as.character(sort(c(o,p,q))),collapse = ''))]]=test[[as.character(paste(as.character(sort(c(o,p,q))),collapse = ''))]]+1
+#					}
+#				}		
+#			}
+#		}
 	}
 }	
 	
