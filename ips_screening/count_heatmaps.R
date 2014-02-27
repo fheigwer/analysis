@@ -1,6 +1,49 @@
-load('~/Desktop/Projects/ips_kinome_screen/10301 sample_data_ctrl.RData')
-load('~/Desktop/Projects/ips_kinome_screen/10301 clustering_ctrl.RData')
+library(scales)
+library(scatterplot3d)
+library(rgl)
+library(pheatmap)
 
+load('~/Desktop/Projects/ips_kinome_screen/10401 sample_data_ctrl_ctrltrain.RData')
+load('~/Desktop/Projects/ips_kinome_screen/10401 clustering_ctrl_ctrltrain.RData')
+a=read.table(file="~/Desktop/Projects/ips_kinome_screen/data/Christian_IPSC/10401/wellnames.txt")
+pos=a[,1][which(a[,3]=="pos")]
+neg=a[,1][which(a[,3]=="neg")]
+colnames(sample_data)=c("Nuclear Area", "Nuclear Extent", "max. Oct4 Intensity", "max. Hoechst Intensity", "ø Hoechst Intensity", "ø Oct4 Intensity", "Distance from first neighbor", "Number of Neighbors")
+		
+poswell=c()
+posmatrix=c(0,0,0,0,0,0)
+for(i in pos){
+	poswell=c(poswell,which(clustering[,1]==i))
+	postats=c()
+	for(j in 1:6){
+		postats=c(postats,length(which(clustering[which(clustering[,1]==i),2]==j)))
+	}
+	postats=postats/sum(postats)*100
+	#postats=colMeans(sample_data[poswell,])
+	posmatrix=rbind(posmatrix,postats)
+}
+#colnames(posmatrix)=c("1","2","3","4","5","6")
+posmatrix1=posmatrix[-1,]
+rownames(posmatrix1)=rep("pos",times=dim(posmatrix1)[1])
+
+negwell=c()
+negmatrix=c(0,0,0,0,0,0)
+for(i in neg){
+	negwell=c(negwell,which(clustering[,1]==i))
+	negtats=c()
+	for(j in 1:6){
+		negtats=c(negtats,length(which(clustering[which(clustering[,1]==i),2]==j)))
+	}
+	negtats=negtats/sum(negtats)*100
+	#negtats=colMeans(sample_data[negwell,])
+	negmatrix=rbind(negmatrix,negtats)
+}
+colnames(negmatrix)=c("1","2","3","4","5","6")
+negmatrix1=negmatrix[-1,]
+rownames(negmatrix1)=rep("neg",times=dim(negmatrix1)[1])
+
+load('~/Desktop/Projects/ips_kinome_screen/10402 sample_data_ctrl_ctrltrain.RData')
+load('~/Desktop/Projects/ips_kinome_screen/10402 clustering_ctrl_ctrltrain.RData')
 a=read.table(file="~/Desktop/Projects/ips_kinome_screen/data/Christian_IPSC/10402/wellnames.txt")
 pos=a[,1][which(a[,3]=="pos")]
 neg=a[,1][which(a[,3]=="neg")]
@@ -14,12 +57,13 @@ for(i in pos){
 	for(j in 1:6){
 		postats=c(postats,length(which(clustering[which(clustering[,1]==i),2]==j)))
 	}
+	postats=postats/sum(postats)*100
 	#postats=colMeans(sample_data[poswell,])
 	posmatrix=rbind(posmatrix,postats)
 }
 #colnames(posmatrix)=c("1","2","3","4","5","6")
-posmatrix=posmatrix[-1,]
-rownames(posmatrix)=rep("pos",times=dim(posmatrix)[1])
+posmatrix2=posmatrix[-1,]
+rownames(posmatrix2)=rep("pos",times=dim(posmatrix2)[1])
 
 negwell=c()
 negmatrix=c(0,0,0,0,0,0)
@@ -29,111 +73,158 @@ for(i in neg){
 	for(j in 1:6){
 		negtats=c(negtats,length(which(clustering[which(clustering[,1]==i),2]==j)))
 	}
+	negtats=negtats/sum(negtats)*100
 	#negtats=colMeans(sample_data[negwell,])
 	negmatrix=rbind(negmatrix,negtats)
 }
 colnames(negmatrix)=c("1","2","3","4","5","6")
-negmatrix=negmatrix[-1,]
-rownames(negmatrix)=rep("neg",times=dim(negmatrix)[1])
+negmatrix2=negmatrix[-1,]
+rownames(negmatrix2)=rep("neg",times=dim(negmatrix2)[1])
 
-#tiff(file="population_heatmap.tif",height=2024,width=2024)
-#pheatmap(rbind(posmatrix,negmatrix),mar=c(10,10,10,10),cex=2)
-#dev.off()
-
-dev.new()
-scatterplot3d(sample_data[poswell,1],sample_data[poswell,2],sample_data[poswell,6],mar=c(10,10,10,10),color=alpha("black",0.3),box=FALSE,pch=".",xlab=colnames(sample_data)[1],ylab=colnames(sample_data)[2],zlab=colnames(sample_data)[6],main="positive controls")
-dev.new()
-scatterplot3d(sample_data[negwell,1],sample_data[negwell,2],sample_data[negwell,6],mar=c(10,10,10,10),color=alpha("black",0.3),box=FALSE,pch=".",xlab=colnames(sample_data)[1],ylab=colnames(sample_data)[2],zlab=colnames(sample_data)[6],main="negative controls")
-
-
-library(scales)
-library(scatterplot3d)
-library(rgl)
-
-x=cbind(rbind(matrix(rnorm(100,mean=1,sd=0.8),nrow=100),matrix(rnorm(100,mean=3,sd=0.8),nrow=100),matrix(rnorm(100,mean=10,sd=0.8),nrow=100))
-		,rbind(matrix(rnorm(100,mean=1,sd=0.8),nrow=100),matrix(rnorm(100,mean=3,sd=0.8),nrow=100),matrix(rnorm(100,mean=10,sd=0.8),nrow=100))
-		,rbind(matrix(rnorm(100,mean=1,sd=0.8),nrow=100),matrix(rnorm(100,mean=3,sd=0.8),nrow=100),matrix(rnorm(100,mean=10,sd=0.8),nrow=100))
-		)
+load('~/Desktop/Projects/ips_kinome_screen/10403 sample_data_ctrl_ctrltrain.RData')
+load('~/Desktop/Projects/ips_kinome_screen/10403 clustering_ctrl_ctrltrain.RData')
+a=read.table(file="~/Desktop/Projects/ips_kinome_screen/data/Christian_IPSC/10403/wellnames.txt")
+pos=a[,1][which(a[,3]=="pos")]
+neg=a[,1][which(a[,3]=="neg")]
+colnames(sample_data)=c("Nuclear Area", "Nuclear Extent", "max. Oct4 Intensity", "max. Hoechst Intensity", "ø Hoechst Intensity", "ø Oct4 Intensity", "Distance from first neighbor", "Number of Neighbors")
 		
-y=cbind(	rbind(matrix(rnorm(700,mean=1,sd=0.8),nrow=7),matrix(rnorm(500,mean=3,sd=0.8),nrow=5),matrix(rnorm(300,mean=10,sd=0.8),nrow=3))
-		,	rbind(matrix(rnorm(700,mean=1,sd=0.8),nrow=7),matrix(rnorm(500,mean=3,sd=0.8),nrow=5),matrix(rnorm(300,mean=10,sd=0.8),nrow=3))
-		,	rbind(matrix(rnorm(700,mean=1,sd=0.8),nrow=7),matrix(rnorm(500,mean=3,sd=0.8),nrow=5),matrix(rnorm(300,mean=10,sd=0.8),nrow=3))
-		)
-		
-z=cbind(	rbind(matrix(rnorm(300,mean=1,sd=0.8),nrow=3),matrix(rnorm(500,mean=3,sd=0.8),nrow=5),matrix(rnorm(700,mean=10,sd=0.8),nrow=7))
-		,	rbind(matrix(rnorm(300,mean=1,sd=0.8),nrow=3),matrix(rnorm(500,mean=3,sd=0.8),nrow=5),matrix(rnorm(700,mean=10,sd=0.8),nrow=7))
-		,	rbind(matrix(rnorm(300,mean=1,sd=0.8),nrow=3),matrix(rnorm(500,mean=3,sd=0.8),nrow=5),matrix(rnorm(700,mean=10,sd=0.8),nrow=7))
-		)
-tiff(file="scatter_black.tif")
-	scatterplot3d(x,xlab="Oct 4 intensity",ylab="Cell size",zlab="Cell roundness")
-dev.off()
- 
-train_clust=kmeans(x,3,nstart=10)
-colnames(train_clust$centers)=c("Oct 4 intensity","Cell size","Cell roundness")
-tiff(file="scatter_colored.tif")
- plot3d(x,xlab="Oct 4 intensity",ylab="Cell size",zlab="Cell roundness")#,col=train_clust$cluster)
-points3d(train_clust$centers,xlab="Oct 4 intensity",ylab="Cell size",zlab="Cell roundness",col=1:3,size=10)
-# points3d( y[1:15,1:3],xlab="Oct 4 intensity",ylab="Cell size",zlab="Cell roundness",col="blue",size=5)
-# points3d(z[1:15,1:3],xlab="Oct 4 intensity",ylab="Cell size",zlab="Cell roundness",col="cyan",size=5)
-dev.off()
-
-png(file="Starplot_test.png",width = 4024, height = 2024)
-	stars(train_clust$centers[,c(1,2,3)],cex=3,bg="grey",scale=TRUE,full=TRUE,draw.segments=TRUE,key.loc=c(-2,4),mar=c(50,50,50,50),col.segments=c("#d53e4f","#e6f598","#fdae61"))
-dev.off()
-
-levels_y=knn(x, y[1:15,1:3], train_clust$cluster, k = 100, prob=F)
-levels_z=knn(x, z[1:15,1:3], train_clust$cluster, k = 100, prob=F)
-
-
-
-
-
 poswell=c()
-posmatrix=c(3,5,7)
-negmatrix=c(7,5,3)
-names(posmatrix)=c("black","red","green")
-totalmatrix=rbind(posmatrix,negmatrix)
-rownames(totalmatrix)=c("sample 1","sample 2")
-pheatmap(totalmatrix,co)
-
-
-for(i in 1:15){
+posmatrix=c(0,0,0,0,0,0)
+for(i in pos){
 	poswell=c(poswell,which(clustering[,1]==i))
 	postats=c()
-	for(j in 1:3){
-		postats=c(postats,length(which(levels_y==i)))
+	for(j in 1:6){
+		postats=c(postats,length(which(clustering[which(clustering[,1]==i),2]==j)))
 	}
+	postats=postats/sum(postats)*100
 	#postats=colMeans(sample_data[poswell,])
 	posmatrix=rbind(posmatrix,postats)
 }
-
-posmatrix=posmatrix[-1,]
-rownames(posmatrix)=rep("pos",times=dim(posmatrix)[1])
+#colnames(posmatrix)=c("1","2","3","4","5","6")
+posmatrix3=posmatrix[-1,]
+rownames(posmatrix3)=rep("pos",times=dim(posmatrix3)[1])
 
 negwell=c()
-negmatrix=c(0,0,0)
-for(i in 1:15){
+negmatrix=c(0,0,0,0,0,0)
+for(i in neg){
 	negwell=c(negwell,which(clustering[,1]==i))
 	negtats=c()
-	for(j in 1:3){
-		negtats=c(negtats,length(which(levels_z==i)))
+	for(j in 1:6){
+		negtats=c(negtats,length(which(clustering[which(clustering[,1]==i),2]==j)))
 	}
+	negtats=negtats/sum(negtats)*100
 	#negtats=colMeans(sample_data[negwell,])
 	negmatrix=rbind(negmatrix,negtats)
 }
-colnames(negmatrix)=c("black","red","green")
-negmatrix=negmatrix[-1,]
-rownames(negmatrix)=rep("neg",times=dim(negmatrix)[1])
+colnames(negmatrix)=c("1","2","3","4","5","6")
+negmatrix3=negmatrix[-1,]
+rownames(negmatrix3)=rep("neg",times=dim(negmatrix3)[1])
 
-tiff(file="population_heatmap.tif",height=2024,width=2024)
-pheatmap(rbind(posmatrix,negmatrix),mar=c(10,10,10,10),cex=2)
+
+load('~/Desktop/Projects/ips_kinome_screen/10401 sample_data_ctrltrain.RData')
+load('~/Desktop/Projects/ips_kinome_screen/10401 clustering_ctrltrain.RData')
+b=read.table(file="~/Desktop/Projects/ips_kinome_screen/data/Christian_IPSC/10401/wellnames_rna.txt")
+colnames(sample_data)=c("Nuclear Area", "Nuclear Extent", "max. Oct4 Intensity", "max. Hoechst Intensity", "ø Hoechst Intensity", "ø Oct4 Intensity", "Distance from first neighbor", "Number of Neighbors")
+sample=b[,1][which(b[,3]!="empty")]
+samplewell=c()
+samplematrix=c(0,0,0,0,0,0)
+for(i in sample){
+	samplewell=c(samplewell,which(clustering[,1]==i))
+	samplestats=c()
+	for(j in 1:6){
+		samplestats=c(samplestats,length(which(clustering[which(clustering[,1]==i),2]==j)))
+	}
+	samplestats=samplestats/sum(samplestats)*100
+	#postats=colMeans(sample_data[poswell,])
+	samplematrix=rbind(samplematrix,samplestats)
+}
+colnames(samplematrix)=c("1","2","3","4","5","6")
+samplematrix1=samplematrix[-1,]
+rownames(samplematrix1)=b[,3][which(b[,3]!="empty")]
+
+load('~/Desktop/Projects/ips_kinome_screen/10402 sample_data_ctrltrain.RData')
+load('~/Desktop/Projects/ips_kinome_screen/10402 clustering_ctrltrain.RData')
+b=read.table(file="~/Desktop/Projects/ips_kinome_screen/data/Christian_IPSC/10402/wellnames_rna.txt")
+colnames(sample_data)=c("Nuclear Area", "Nuclear Extent", "max. Oct4 Intensity", "max. Hoechst Intensity", "ø Hoechst Intensity", "ø Oct4 Intensity", "Distance from first neighbor", "Number of Neighbors")
+sample=b[,1][which(b[,3]!="empty")]
+samplewell=c()
+samplematrix=c(0,0,0,0,0,0)
+for(i in sample){
+	samplewell=c(samplewell,which(clustering[,1]==i))
+	samplestats=c()
+	for(j in 1:6){
+		samplestats=c(samplestats,length(which(clustering[which(clustering[,1]==i),2]==j)))
+	}
+	samplestats=samplestats/sum(samplestats)*100
+	#postats=colMeans(sample_data[poswell,])
+	samplematrix=rbind(samplematrix,samplestats)
+}
+colnames(samplematrix)=c("1","2","3","4","5","6")
+samplematrix2=samplematrix[-1,]
+rownames(samplematrix2)=b[,3][which(b[,3]!="empty")]
+
+load('~/Desktop/Projects/ips_kinome_screen/10403 sample_data_ctrltrain.RData')
+load('~/Desktop/Projects/ips_kinome_screen/10403 clustering_ctrltrain.RData')
+b=read.table(file="~/Desktop/Projects/ips_kinome_screen/data/Christian_IPSC/10403/wellnames_rna.txt")
+colnames(sample_data)=c("Nuclear Area", "Nuclear Extent", "max. Oct4 Intensity", "max. Hoechst Intensity", "ø Hoechst Intensity", "ø Oct4 Intensity", "Distance from first neighbor", "Number of Neighbors")
+sample=b[,1][which(b[,3]!="empty")]
+samplewell=c()
+samplematrix=c(0,0,0,0,0,0)
+for(i in sample){
+	samplewell=c(samplewell,which(clustering[,1]==i))
+	samplestats=c()
+	for(j in 1:6){
+		samplestats=c(samplestats,length(which(clustering[which(clustering[,1]==i),2]==j)))
+	}
+	samplestats=samplestats/sum(samplestats)*100
+	#postats=colMeans(sample_data[poswell,])
+	samplematrix=rbind(samplematrix,samplestats)
+}
+colnames(samplematrix)=c("1","2","3","4","5","6")
+samplematrix3=samplematrix[-1,]
+rownames(samplematrix3)=b[,3][which(b[,3]!="empty")]
+
+
+posmatrix=rbind(posmatrix1,posmatrix2,posmatrix3)
+negmatrix=rbind(negmatrix1,negmatrix2,negmatrix3)
+samplematrix=rbind(samplematrix1,samplematrix2,samplematrix3)
+
+posMean=colMeans(posmatrix)
+negMean=colMeans(negmatrix)
+total=rbind(samplematrix,posmatrix,negmatrix)
+
+dist_to_pos=c()
+for(i in 1:dim(samplematrix)[1]){
+	dist_to_pos=c(dist_to_pos,(sum((posMean-samplematrix[i,])^2))^(1/2))
+}
+names(dist_to_pos)=rownames(samplematrix)
+dist_to_neg=c()
+for(i in 1:dim(samplematrix)[1]){
+	dist_to_neg=c(dist_to_neg,(sum((negMean-samplematrix[i,])^2))^(1/2))
+}
+names(dist_to_neg)=rownames(samplematrix)
+
+
+svg(file="Heatmap_relative_cell_number_104.svg",height=30)
+pheatmap(rbind(posmatrix,negmatrix,samplematrix[c(names(sort(dist_to_pos/dist_to_neg))[1:100]),]),cellheight=10)
+dev.off()
+
+norm_0_1=function(x){
+	return((x-min(x))/(max(x)-min(x)))
+	}
+tiff(file="Distplot_relative_cell_number_104.tif")
+plot(log(dist_to_pos), log(dist_to_neg),pch="*",xlim=c(2,4.5),ylim=c(0,4), xlab="lg ( euclidean distance to positive controls)", ylab="lg ( euclidean distance to negative controls)")
+lines(c(log(median(dist_to_pos)), log(median(dist_to_pos))),c(0,max(dist_to_neg)),col="red")
+lines(c(0, max(dist_to_pos)),c(log(median(dist_to_neg)), log(median(dist_to_neg))),col="red")
+points(log(dist_to_pos)[c(names(sort(dist_to_pos/dist_to_neg))[1:100])],log(dist_to_neg)[c(names(sort(dist_to_pos/dist_to_neg))[1:100])],col="green")
+points(log(dist_to_pos)[c("TAF1","SMG1")],log(dist_to_neg)[c("TAF1","SMG1")],col="red",pch="x")
+text(c(2.25,2.25,4.25,4.25),c(0,3.75,0,4),c("Oct4-/+ like","Oct4- like","Oct4+ like","Indep. phenotype"))
 dev.off()
 
 
+realtive_hitlist_104=c(names(sort(dist_to_pos/dist_to_neg))[1:100])
 
 
 
 
-
-
-
+#identify(log(dist_to_pos), log(dist_to_neg),labels=names(dist_to_pos),n=3)
