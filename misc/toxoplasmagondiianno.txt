@@ -1,0 +1,3 @@
+TGGT1_chr* = chromosomes are there as gff and as fasta
+AAQM* = contig are there as gff and as fasta -> to treat like chromes
+TGGT1_\d+ = genes are ther as gff anno and as fasta 
