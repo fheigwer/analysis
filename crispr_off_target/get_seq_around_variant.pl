@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Bio::DB::Fasta;
 my $infilename=shift;
-my $db = Bio::DB::Fasta->new( '/Users/b110-mm06/Desktop/Projects/databasefiles/ensemble_fasta_files/Drosophila_melanogaster.BDGP5.73.dna.toplevel.fa', -makeid => \&make_my_id );
+my $db = Bio::DB::Fasta->new( '/Volumes/IMAGES/databasefiles/ensemble_fasta_files/Drosophila_melanogaster.BDGP5.74.dna.toplevel.fa', -makeid => \&make_my_id );
 open my $infile , "$infilename";
 	while (<$infile>){
 		if($_=~m/^\w/){

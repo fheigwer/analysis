@@ -1,10 +1,110 @@
-perl ~/Desktop/analysis/crispr_off_target/final_filter_vcf.pl mutants_only_highqual_samtools.vcf > mutants_only_highqual_samtools_qual_het_DP_X.vcfperl ~/Desktop/analysis/crispr_off_target/final_filter_vcf.pl mutants_only_highqual_samtools.vcf > mutants_only_highqual_samtools_qual_het_DP_X.vcf
-perl ~/Desktop/analysis/crispr_off_target/get_seq_around_variant.pl mutants_only_highqual_samtools_qual_het_DP_X.vcf > mutants_only_highqual_samtools_qual_het_DP_X.fasta
+bcftools index OreR_S4_L001.indels.bcf.gz
+bcftools index FM7_S3_L001.indels.bcf.gz
+bcftools index F3_S2_L001.indels.bcf.gz
+bcftools index F2_S1_L001.indels.bcf.gz
+bcftools index F5_S1_L001.indels.bcf.gz
+
+bcftools isec -O b -C F2_S1_L001.indels.bcf.gz OreR_S4_L001.indels.bcf.gz -p . 
+mv 0000.bcf F2_S1_L001.indels.OreR.bcf.gz
+bcftools index F2_S1_L001.indels.OreR.bcf.gz
+
+bcftools isec -O b -C F2_S1_L001.indels.OreR.bcf.gz FM7_S3_L001.indels.bcf.gz -p . 
+mv 0000.bcf F2_S1_L001.indels.OreR.FM7.bcf.gz
+bcftools index F2_S1_L001.indels.OreR.FM7.bcf.gz
+
+bcftools isec -O b -C F3_S2_L001.indels.bcf.gz OreR_S4_L001.indels.bcf.gz -p . 
+mv 0000.bcf F3_S2_L001.indels.OreR.bcf.gz
+bcftools index F3_S2_L001.indels.OreR.bcf.gz
+
+bcftools isec -O b -C F3_S2_L001.indels.OreR.bcf.gz FM7_S3_L001.indels.bcf.gz -p . 
+mv 0000.bcf F3_S2_L001.indels.OreR.FM7.bcf.gz
+bcftools index F3_S2_L001.indels.OreR.FM7.bcf.gz
+
+bcftools isec -O b -C F5_S1_L001.indels.bcf.gz OreR_S4_L001.indels.bcf.gz -p . 
+mv 0000.bcf F5_S1_L001.indels.OreR.bcf.gz
+bcftools index F5_S1_L001.indels.OreR.bcf.gz
+
+bcftools isec -O b -C F5_S1_L001.indels.OreR.bcf.gz FM7_S3_L001.indels.bcf.gz -p . 
+mv 0000.bcf F5_S1_L001.indels.OreR.FM7.bcf.gz
+bcftools index F5_S1_L001.indels.OreR.FM7.bcf.gz
+
+bcftools isec -O b F2_S1_L001.indels.OreR.FM7.bcf.gz F3_S2_L001.indels.OreR.FM7.bcf.gz -p .
+mv 0000.bcf F2_S1_L001.indels.woOreR.woFM7.woF3.bcf.gz
+mv 0001.bcf F3_S2_L001.indels.woOreR.woFM7.woF2.bcf.gz
+mv 0002.bcf F2F3_S1_L001.indels.woOreR.woFM7.bcf.gz
+
+bcftools isec -O b F5_S1_L001.indels.OreR.FM7.bcf.gz F3_S2_L001.indels.OreR.FM7.bcf.gz -p .
+mv 0000.bcf F5_S1_L001.indels.woOreR.woFM7.woF3.bcf.gz
+mv 0001.bcf F3_S2_L001.indels.woOreR.woFM7.woF5.bcf.gz
+mv 0002.bcf F5F3_S1_L001.indels.woOreR.bcf.gz
+
+bcftools isec -O b F5_S1_L001.indels.OreR.FM7.bcf.gz F2_S1_L001.indels.OreR.FM7.bcf.gz -p .
+mv 0000.bcf F5_S1_L001.indels.woOreR.woFM7.woF2.bcf.gz
+mv 0001.bcf F2_S1_L001.indels.woOreR.woFM7.woF5.bcf.gz
+mv 0002.bcf F5F2_S1_L001.indels.woOreR.woFM7.bcf.gz
+
+bcftools view -O v F5_S1_L001.indels.woOreR.woFM7.woF3.bcf.gz > F5_S1_L001.indels.woOreR.woFM7.woF3.vcf
+bcftools view -O v F3_S2_L001.indels.woOreR.woFM7.woF5.bcf.gz > F3_S2_L001.indels.woOreR.woFM7.woF5.vcf
+bcftools view -O v F5F3_S1_L001.indels.woOreR.woFM7.bcf.gz > F5F3_S1_L001.indels.woOreR.woFM7.vcf
+bcftools view -O v F5_S1_L001.indels.woOreR.woFM7.woF2.bcf.gz > F5_S1_L001.indels.woOreR.woFM7.woF2.vcf
+bcftools view -O v F2_S1_L001.indels.woOreR.woFM7.woF5.bcf.gz > F2_S1_L001.indels.woOreR.woFM7.woF5.vcf
+bcftools view -O v F5F2_S1_L001.indels.woOreR.woFM7.bcf.gz > F5F2_S1_L001.indels.woOreR.woFM7.vcf
+bcftools view -O v F2_S1_L001.indels.woOreR.woFM7.woF3.bcf.gz > F2_S1_L001.indels.woOreR.woFM7.woF3.vcf
+bcftools view -O v F3_S2_L001.indels.woOreR.woFM7.woF2.bcf.gz > F3_S2_L001.indels.woOreR.woFM7.woF2.vcf
+bcftools view -O v F2F3_S1_L001.indels.woOreR.woFM7.bcf.gz > F2F3_S1_L001.indels.woOreR.woFM7.vcf
+bcftools view -O v F2F3_S1_L001.indels.woOreR.woFM7.bcf.gz > F2F3_S1_L001.indels.woOreR.woFM7.vcf
+bcftools view -O v OreR_S4_L001.indels.bcf.gz > OreR_S4_L001.indels.vcf
+bcftools view -O v FM7_S3_L001.indels.bcf.gz > FM7_S3_L001.indels.vcf
+
+perl ~/Desktop/analysis/crispr_off_target/final_filter_vcf.pl F2_S1_L001.indels.woOreR.woFM7.woF3.vcf	>	F2_S1_L001.indels.woOreR.woFM7.woF3.filtered.vcf
+perl ~/Desktop/analysis/crispr_off_target/final_filter_vcf.pl F2_S1_L001.indels.woOreR.woFM7.woF5.vcf	>	F2_S1_L001.indels.woOreR.woFM7.woF5.filtered.vcf
+perl ~/Desktop/analysis/crispr_off_target/final_filter_vcf.pl F2F3_S1_L001.indels.woOreR.woFM7.vcf	>	F2F3_S1_L001.indels.woOreR.woFM7.filtered.vcf 
+perl ~/Desktop/analysis/crispr_off_target/final_filter_vcf.pl F3_S2_L001.indels.woOreR.woFM7.woF2.vcf	>	F3_S2_L001.indels.woOreR.woFM7.woF2.filtered.vcf 
+perl ~/Desktop/analysis/crispr_off_target/final_filter_vcf.pl F3_S2_L001.indels.woOreR.woFM7.woF5.vcf	>	F3_S2_L001.indels.woOreR.woFM7.woF5.filtered.vcf
+perl ~/Desktop/analysis/crispr_off_target/final_filter_vcf.pl F5_S1_L001.indels.woOreR.woFM7.woF2.vcf	>	F5_S1_L001.indels.woOreR.woFM7.woF2.filtered.vcf 
+perl ~/Desktop/analysis/crispr_off_target/final_filter_vcf.pl F5_S1_L001.indels.woOreR.woFM7.woF3.vcf	>	F5_S1_L001.indels.woOreR.woFM7.woF3.filtered.vcf 
+perl ~/Desktop/analysis/crispr_off_target/final_filter_vcf.pl F5F2_S1_L001.indels.woOreR.woFM7.vcf	>	F5F2_S1_L001.indels.woOreR.woFM7.filtered.vcf
+perl ~/Desktop/analysis/crispr_off_target/final_filter_vcf.pl F5F3_S1_L001.indels.woOreR.woFM7.vcf	>	F5F3_S1_L001.indels.woOreR.woFM7.filtered.vcf
+
+perl ~/Desktop/analysis/crispr_off_target/get_seq_around_variant.pl F2_S1_L001.indels.woOreR.woFM7.woF3.filtered.vcf> 	seq_around_F2_woF3.fa 
+perl ~/Desktop/analysis/crispr_off_target/get_seq_around_variant.pl F2_S1_L001.indels.woOreR.woFM7.woF5.filtered.vcf > 	seq_around_F2_woF5.fa
+perl ~/Desktop/analysis/crispr_off_target/get_seq_around_variant.pl F2F3_S1_L001.indels.woOreR.woFM7.filtered.vcf > 	seq_around_F3F2.fa  
+perl ~/Desktop/analysis/crispr_off_target/get_seq_around_variant.pl F3_S2_L001.indels.woOreR.woFM7.woF2.filtered.vcf > 	seq_around_F3_woF2.fa  
+perl ~/Desktop/analysis/crispr_off_target/get_seq_around_variant.pl F3_S2_L001.indels.woOreR.woFM7.woF5.filtered.vcf > 	seq_around_F3_woF5.fa 
+perl ~/Desktop/analysis/crispr_off_target/get_seq_around_variant.pl F5_S1_L001.indels.woOreR.woFM7.woF2.filtered.vcf > 	seq_around_F5_woF2.fa 
+perl ~/Desktop/analysis/crispr_off_target/get_seq_around_variant.pl F5_S1_L001.indels.woOreR.woFM7.woF3.filtered.vcf > 	seq_around_F5_woF3.fa 
+perl ~/Desktop/analysis/crispr_off_target/get_seq_around_variant.pl F5F2_S1_L001.indels.woOreR.woFM7.filtered.vcf > 	seq_around_F5F2.fa 
+perl ~/Desktop/analysis/crispr_off_target/get_seq_around_variant.pl F5F3_S1_L001.indels.woOreR.woFM7.filtered.vcf > 	seq_around_F5F3.fa 
+
+makeblastdb -dbtype nucl -in seq_around_F2_woF3.fa  -out seq_around_F2_woF3 -title seq_around_F2_woF3 
+makeblastdb -dbtype nucl -in seq_around_F3_woF2.fa  -out seq_around_F3_woF2 -title seq_around_F3_woF2 
+makeblastdb -dbtype nucl -in seq_around_F3F2.fa  -out seq_around_F3F2 -title seq_around_F3F2 
+makeblastdb -dbtype nucl -in seq_around_F2_woF5.fa  -out seq_around_F2_woF5 -title seq_around_F2_woF5 
+makeblastdb -dbtype nucl -in seq_around_F3_woF5.fa  -out seq_around_F3_woF5 -title seq_around_F3_woF5 
+makeblastdb -dbtype nucl -in seq_around_F5_woF2.fa  -out seq_around_F5_woF2 -title seq_around_F5_woF2 
+makeblastdb -dbtype nucl -in seq_around_F5_woF3.fa  -out seq_around_F5_woF3 -title seq_around_F5_woF3 
+makeblastdb -dbtype nucl -in seq_around_F5F2.fa  -out seq_around_F5F2 -title seq_around_F5F2 
+makeblastdb -dbtype nucl -in seq_around_F5F3.fa  -out seq_around_F5F3 -title seq_around_F5F3 
 
 
-#makeblastdb -dbtype nucl -in mutants_only_highqual_samtools_qual_het_DP.fasta -out seqs_around_indels -title seq_around_mutant_indels
-makeblastdb -dbtype nucl -in mutants_only_highqual_samtools_qual_het_DP_X.fasta -out seqs_around_indels_X -title seq_around_mutant_indels_X
-blastn -query crispr_seq.fa  -db seqs_around_indels_X -evalue 1000 -task blastn-short -penalty -1 -reward 1 -outfmt 6 > blast_around_indels_X.tab
-#blastn -query crispr_seq.fa  -db seqs_around_indels -evalue 1000 -task blastn-short -penalty -1 -reward 1 -gapopen 0 -gapextend 2 -outfmt 6 > blast_around_indels.tab
+blastn -query crispr_seq.fa  -db seq_around_F2_woF3 -evalue 1000 -task blastn-short -penalty -1 -reward 1 -outfmt 6 > blast_around_F2_woF3.tab
+blastn -query crispr_seq.fa  -db seq_around_F3_woF2 -evalue 1000 -task blastn-short -penalty -1 -reward 1 -outfmt 6 > blast_around_F3_woF2.tab
+blastn -query crispr_seq.fa  -db seq_around_F3F2 -evalue 1000 -task blastn-short -penalty -1 -reward 1 -outfmt 6 > blast_around_F2F3.tab
+blastn -query crispr_seq.fa  -db seq_around_F2_woF5 -evalue 1000 -task blastn-short -penalty -1 -reward 1 -outfmt 6 > blast_around_F2_woF5.tab
+blastn -query crispr_seq.fa  -db seq_around_F3_woF5 -evalue 1000 -task blastn-short -penalty -1 -reward 1 -outfmt 6 > blast_around_F3_woF5.tab
+blastn -query crispr_seq.fa  -db seq_around_F5_woF3 -evalue 1000 -task blastn-short -penalty -1 -reward 1 -outfmt 6 > blast_around_F5_woF3.tab
+blastn -query crispr_seq.fa  -db seq_around_F5_woF2 -evalue 1000 -task blastn-short -penalty -1 -reward 1 -outfmt 6 > blast_around_F5_woF2.tab
+blastn -query crispr_seq.fa  -db seq_around_F5F2 -evalue 1000 -task blastn-short -penalty -1 -reward 1 -outfmt 6 > blast_around_F5F2.tab
+blastn -query crispr_seq.fa  -db seq_around_F5F3 -evalue 1000 -task blastn-short -penalty -1 -reward 1 -outfmt 6 > blast_around_F5F3.tab
 
-perl ~/Desktop/analysis/crispr_off_target/filter_blast_output.pl blast_around_indels_X.tab
+perl ~/Desktop/analysis/crispr_off_target/filter_blast_output.pl blast_around_F2_woF3.tab > seq_related_to_crisp_F2_woF3.tab
+perl ~/Desktop/analysis/crispr_off_target/filter_blast_output.pl blast_around_F3_woF2.tab > seq_related_to_crisp_F2_woF3.tab
+perl ~/Desktop/analysis/crispr_off_target/filter_blast_output.pl blast_around_F2F3.tab > seq_related_to_crisp_F2_woF3.tab
+
+perl ~/Desktop/analysis/crispr_off_target/filter_blast_output.pl blast_around_F2_woF5.tab > seq_related_to_crisp_F2_woF5.tab
+perl ~/Desktop/analysis/crispr_off_target/filter_blast_output.pl blast_around_F3_woF5.tab > seq_related_to_crisp_F3_woF5.tab
+perl ~/Desktop/analysis/crispr_off_target/filter_blast_output.pl blast_around_F5_woF3.tab > seq_related_to_crisp_F5_woF3.tab
+
+perl ~/Desktop/analysis/crispr_off_target/filter_blast_output.pl blast_around_F5_woF2.tab > seq_related_to_crisp_F5_woF2.tab
+perl ~/Desktop/analysis/crispr_off_target/filter_blast_output.pl blast_around_F5F2.tab > seq_related_to_crisp_F5F2.tab
+perl ~/Desktop/analysis/crispr_off_target/filter_blast_output.pl blast_around_F5F3.tab > seq_related_to_crisp_F5F3.tab
