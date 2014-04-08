@@ -14,8 +14,10 @@ while(<$infile>){
 								if($line[3]!~m/CCCCC+/gi && $line[4]!~m/CCCCC+/gi){
 									if($line[3]!~m/GGGGG+/gi && $line[4]!~m/GGGGG+/gi){
 										if($line[3]!~m/TTTTT+/gi && $line[4]!~m/TTTTT+/gi){
-											if(!is_repetitive($line[3]) && !is_repetitive($line[4])){ #filter out low complex repetitive sequences
-												print $_;												
+											if(length($line[3])>length($line[4])){
+												if(!is_repetitive($line[3]) && !is_repetitive($line[4])){ #filter out low complex repetitive sequences
+													print $_;												
+												}
 											}
 										}
 									}
