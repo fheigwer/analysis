@@ -9,7 +9,7 @@ load('~/Desktop/Projects/ips_kinome_screen/10301 clustering_ctrl_ctrltrain.RData
 a=read.table(file="~/Desktop/Projects/ips_kinome_screen/data/Christian_IPSC/10301/wellnames.txt")
 plate_well_name=c()
 for(i in 1:nrow(a)){
-  plate_well_name=c(plate_well_name,paste("10301",a[i,2],a[i,3],sep="_"))
+   plate_well_name=c(plate_well_name,paste(b[i,3])) #paste("10303",b[i,2],b[i,3],sep="_"))
 }
 pos=a[,1][which(a[,3]=="pos")]
 neg=a[,1][which(a[,3]=="neg")]
@@ -23,7 +23,7 @@ for(i in pos){
 	for(j in 1:6){
 		postats=c(postats,length(which(clustering[which(clustering[,1]==i),2]==j)))
 	}
-	#postats=postats/sum(postats)*100
+	postats=postats/sum(postats)*100
 	#postats=colMeans(sample_data[poswell,])
 	posmatrix=rbind(posmatrix,postats)
 }
@@ -39,7 +39,7 @@ for(i in neg){
 	for(j in 1:6){
 		negtats=c(negtats,length(which(clustering[which(clustering[,1]==i),2]==j)))
 	}
-	#negtats=negtats/sum(negtats)*100
+	negtats=negtats/sum(negtats)*100
 	#negtats=colMeans(sample_data[negwell,])
 	negmatrix=rbind(negmatrix,negtats)
 }
@@ -52,7 +52,7 @@ load('~/Desktop/Projects/ips_kinome_screen/10302 clustering_ctrl_ctrltrain.RData
 a=read.table(file="~/Desktop/Projects/ips_kinome_screen/data/Christian_IPSC/10302/wellnames.txt")
 plate_well_name=c()
 for(i in 1:nrow(a)){
-  plate_well_name=c(plate_well_name,paste("10302",a[i,2],a[i,3],sep="_"))
+   plate_well_name=c(plate_well_name,paste(b[i,3])) #paste("10303",b[i,2],b[i,3],sep="_"))
 }
 pos=a[,1][which(a[,3]=="pos")]
 neg=a[,1][which(a[,3]=="neg")]
@@ -66,7 +66,7 @@ for(i in pos){
 	for(j in 1:6){
 		postats=c(postats,length(which(clustering[which(clustering[,1]==i),2]==j)))
 	}
-	#postats=postats/sum(postats)*100
+	postats=postats/sum(postats)*100
 	#postats=colMeans(sample_data[poswell,])
 	posmatrix=rbind(posmatrix,postats)
 }
@@ -82,7 +82,7 @@ for(i in neg){
 	for(j in 1:6){
 		negtats=c(negtats,length(which(clustering[which(clustering[,1]==i),2]==j)))
 	}
-	#negtats=negtats/sum(negtats)*100
+	negtats=negtats/sum(negtats)*100
 	#negtats=colMeans(sample_data[negwell,])
 	negmatrix=rbind(negmatrix,negtats)
 }
@@ -95,7 +95,7 @@ load('~/Desktop/Projects/ips_kinome_screen/10303 clustering_ctrl_ctrltrain.RData
 a=read.table(file="~/Desktop/Projects/ips_kinome_screen/data/Christian_IPSC/10303/wellnames.txt")
 plate_well_name=c()
 for(i in 1:nrow(a)){
-  plate_well_name=c(plate_well_name,paste("10303",a[i,2],a[i,3],sep="_"))
+  plate_well_name=c(plate_well_name,paste(b[i,3])) #paste("10303",b[i,2],b[i,3],sep="_"))
 }
 pos=a[,1][which(a[,3]=="pos")]
 neg=a[,1][which(a[,3]=="neg")]
@@ -109,7 +109,7 @@ for(i in pos){
 	for(j in 1:6){
 		postats=c(postats,length(which(clustering[which(clustering[,1]==i),2]==j)))
 	}
-	#postats=postats/sum(postats)*100
+	postats=postats/sum(postats)*100
 	#postats=colMeans(sample_data[poswell,])
 	posmatrix=rbind(posmatrix,postats)
 }
@@ -125,7 +125,7 @@ for(i in neg){
 	for(j in 1:6){
 		negtats=c(negtats,length(which(clustering[which(clustering[,1]==i),2]==j)))
 	}
-	#negtats=negtats/sum(negtats)*100
+	negtats=negtats/sum(negtats)*100
 	#negtats=colMeans(sample_data[negwell,])
 	negmatrix=rbind(negmatrix,negtats)
 }
@@ -139,7 +139,7 @@ load('~/Desktop/Projects/ips_kinome_screen/10301 clustering_ctrltrain.RData')
 b=read.table(file="~/Desktop/Projects/ips_kinome_screen/data/Christian_IPSC/10301/wellnames_rna.txt")
 plate_well_name=c()
 for(i in 1:nrow(b)){
-  plate_well_name=c(plate_well_name,paste("10301",b[i,2],b[i,3],sep="_"))
+   plate_well_name=c(plate_well_name,paste(b[i,3])) #paste("10303",b[i,2],b[i,3],sep="_"))
 }
 colnames(sample_data)=c("Nuclear Area", "Nuclear Extent", "max. Oct4 Intensity", "max. Hoechst Intensity", "ø Hoechst Intensity", "ø Oct4 Intensity", "Distance from first neighbor", "Number of Neighbors")
 sample=b[,1][which(b[,3]!="empty")]
@@ -151,7 +151,7 @@ for(i in sample){
 	for(j in 1:6){
 		samplestats=c(samplestats,length(which(clustering[which(clustering[,1]==i),2]==j)))
 	}
-	#samplestats=samplestats/sum(samplestats)*100
+	samplestats=samplestats/sum(samplestats)*100
 	#postats=colMeans(sample_data[poswell,])
 	samplematrix=rbind(samplematrix,samplestats)
 }
@@ -164,7 +164,7 @@ load('~/Desktop/Projects/ips_kinome_screen/10302 clustering_ctrltrain.RData')
 b=read.table(file="~/Desktop/Projects/ips_kinome_screen/data/Christian_IPSC/10302/wellnames_rna.txt")
 plate_well_name=c()
 for(i in 1:nrow(b)){
-  plate_well_name=c(plate_well_name,paste("10302",b[i,2],b[i,3],sep="_"))
+    plate_well_name=c(plate_well_name,paste(b[i,3])) #paste("10303",b[i,2],b[i,3],sep="_"))
 }
 colnames(sample_data)=c("Nuclear Area", "Nuclear Extent", "max. Oct4 Intensity", "max. Hoechst Intensity", "ø Hoechst Intensity", "ø Oct4 Intensity", "Distance from first neighbor", "Number of Neighbors")
 sample=b[,1][which(b[,3]!="empty")]
@@ -176,7 +176,7 @@ for(i in sample){
 	for(j in 1:6){
 		samplestats=c(samplestats,length(which(clustering[which(clustering[,1]==i),2]==j)))
 	}
-	#samplestats=samplestats/sum(samplestats)*100
+	samplestats=samplestats/sum(samplestats)*100
 	#postats=colMeans(sample_data[poswell,])
 	samplematrix=rbind(samplematrix,samplestats)
 }
@@ -189,7 +189,7 @@ load('~/Desktop/Projects/ips_kinome_screen/10303 clustering_ctrltrain.RData')
 b=read.table(file="~/Desktop/Projects/ips_kinome_screen/data/Christian_IPSC/10303/wellnames_rna.txt")
 plate_well_name=c()
 for(i in 1:nrow(b)){
-  plate_well_name=c(plate_well_name,paste("10303",b[i,2],b[i,3],sep="_"))
+  plate_well_name=c(plate_well_name,paste(b[i,3])) #paste("10303",b[i,2],b[i,3],sep="_"))
 }
 colnames(sample_data)=c("Nuclear Area", "Nuclear Extent", "max. Oct4 Intensity", "max. Hoechst Intensity", "ø Hoechst Intensity", "ø Oct4 Intensity", "Distance from first neighbor", "Number of Neighbors")
 sample=b[,1][which(b[,3]!="empty")]
@@ -201,7 +201,7 @@ for(i in sample){
 	for(j in 1:6){
 		samplestats=c(samplestats,length(which(clustering[which(clustering[,1]==i),2]==j)))
 	}
-	#samplestats=samplestats/sum(samplestats)*100
+	samplestats=samplestats/sum(samplestats)*100
 	#postats=colMeans(sample_data[poswell,])
 	samplematrix=rbind(samplematrix,samplestats)
 }
@@ -229,19 +229,20 @@ for(i in 1:dim(samplematrix)[1]){
 }
 names(dist_to_neg)=rownames(samplematrix)
 
-
-#svg(file="Heatmap_relative_cell_number_103.svg",height=30)
-pheatmap(rbind(posmatrix,negmatrix,samplematrix[c(names(sort(dist_to_pos/dist_to_neg))[1:100]),]),cellheight=10)
+plot_matrix=rbind(colMeans(posmatrix),colMeans(negmatrix),samplematrix[c(names(sort(dist_to_pos/dist_to_neg))[1:30]),])
+row.names(plot_matrix)[1:2]=c("Oct4","non treated")
+#svg(file="Heatmap_relative_cell_number.svg")
+#pheatmap(plot_matrix,cellheight=10)
 #dev.off()
 #dev.new()
 norm_0_1=function(x){
 	return((x-min(x))/(max(x)-min(x)))
 	}
-svg(file="Distplot_absolute_cell_number_103.svg")
+svg(file="Distplot_relative_cell_number_103.svg")
 plot(log(dist_to_pos), log(dist_to_neg),pch="*", xlab="lg ( euclidean distance to positive controls)", ylab="lg ( euclidean distance to negative controls)")
 lines(c(log(median(dist_to_pos)), log(median(dist_to_pos))),c(0,max(dist_to_neg)),col="red")
 lines(c(0, max(dist_to_pos)),c(log(median(dist_to_neg)), log(median(dist_to_neg))),col="red")
-#points(log(dist_to_pos)[c(names(sort(dist_to_pos/dist_to_neg))[1:30])],log(dist_to_neg)[c(names(sort(dist_to_pos/dist_to_neg))[1:30])],col="green")
+#points(log(dist_to_pos)[c(names(sort(dist_to_pos/dist_to_neg))[1:100])],log(dist_to_neg)[c(names(sort(dist_to_pos/dist_to_neg))[1:100])],col="green")
 #points(log(dist_to_pos)[c("TAF1","SMG1")],log(dist_to_neg)[c("TAF1","SMG1")],col="red",pch="x")
 #text(c(2.25,2.25,4.25,4.25),c(0,3.75,0,4),c("Oct4-/+ like","Oct4- like","Oct4+ like","Indep. phenotype"))
 dev.off()
