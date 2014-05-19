@@ -38,7 +38,7 @@ my @file=(<INFILE>);
 						if($curscore ne $lastscore && $result{$curgene}< 16){
 							print OUTFILE $line;
 							$result{$curgene}++;
-						}
+						}$seq=~s/\w{3}$//;
 					}
 				}
 			}else{

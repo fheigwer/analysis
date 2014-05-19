@@ -1,0 +1,15 @@
+samtools sort -@ 6 -m 1200M F3_S2_L001.bam F3_S2_L001_sorted X  > F3_S2_L001_sorted.bam;
+samtools sort -@ 6 -m 1200M FM7_S3_L001.bam FM7_S3_L001_sorted X  > FM7_S3_L001_sorted.bam;
+
+samtools index F3_S2_L001_sorted.bam &
+samtools index FM7_S3_L001_sorted.bam;
+
+
+samtools sort -@ 6 -m 1200M OreR_S4_L001.bam OreR_S4_L001_sorted X  > OreR_S4_L001_sorted.bam;
+
+
+samtools index OreR_S4_L001_sorted.bam;
+
+
+samtools sort -@ 8 F5_S1_L001.bam F5_S1_L001_sorted X  > F5_S1_L001_sorted.bam;
+samtools index F5_S1_L001_sorted.bam ;

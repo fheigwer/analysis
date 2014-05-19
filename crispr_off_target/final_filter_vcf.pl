@@ -6,21 +6,25 @@ while(<$infile>){
 		my @line=split("\t",$_);
 		if($line[5]>40){#filter for QUAL greater 40
 			if($line[7]=~m/DP=(\d+)/){	#filter for depth greater 4
-				if($1>4){
-					if($line[9]=~m/([\d\.]+)[\/\|]([\d\.]+)/){  #filter to get heterozygous mutations only
-						$S11=$1;$S12=$2;
-						if($S11 ne $S12){
-							if($line[3]!~m/AAAAA+/gi && $line[4]!~m/AAAAA+/gi){ #filter out sequences with homopolymers
-								if($line[3]!~m/CCCCC+/gi && $line[4]!~m/CCCCC+/gi){
-									if($line[3]!~m/GGGGG+/gi && $line[4]!~m/GGGGG+/gi){
-										if($line[3]!~m/TTTTT+/gi && $line[4]!~m/TTTTT+/gi){
-											if(length($line[3])>length($line[4])){
-												if(!is_repetitive($line[3]) && !is_repetitive($line[4])){ #filter out low complex repetitive sequences
-													print $_;												
-												}
-											}
-										}
-									}
+				if($1>40){
+					if($line[7]=~m/IDV=(\d+)/){
+						if($1>5){
+							if($line[9]=~m/([\d\.]+)[\/\|]([\d\.]+)/){  #filter to get heterozygous mutations only
+								$S11=$1;$S12=$2;
+								if($S11 ne $S12){
+									#if($line[3]!~m/AAAAA+/gi && $line[4]!~m/AAAAA+/gi){ #filter out sequences with homopolymers
+										#if($line[3]!~m/CCCCC+/gi && $line[4]!~m/CCCCC+/gi){
+											#if($line[3]!~m/GGGGG+/gi && $line[4]!~m/GGGGG+/gi){
+												#if($line[3]!~m/TTTTT+/gi && $line[4]!~m/TTTTT+/gi){
+													#if(length($line[3])>length($line[4])){
+														#if((!is_repetitive($line[3]) && !is_repetitive($line[4])) || (!is_repetitive($line[3]) && $line[4]=~m/\./)){ #filter out low complex repetitive sequences
+															print $_;												
+														#}
+													#}
+												#}
+											#}
+										#}
+									#}
 								}
 							}
 						}
