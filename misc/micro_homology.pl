@@ -6,7 +6,7 @@ use warnings;
 
 #my $string="ATGCTAATGGATCGAATGCTAATGGATCGATCGTAGCTATGCGACGATGCTAATGGATCGAATGCTAATGGATCGATCGTAGCTATGCGACGACATCGACGATCGTAGCTATGCGACGACATCGACGAATGCTAATGGATCGAATGCTAATGGATCGATCGTAGCTATGCGACGACATCGACGATCGTAGCTATGCGACGACATCGACGAACATCGACGATCGTAGCTATGCGACGACATCGACGA";
 	
-foreach my $stu (1..100000){
+foreach my $stu (1..1000000){
 	my $string="";
 	my %hash=('0'=>"A",'1'=>"G",'2'=>"C",'3'=>"T");
 	foreach my $number (1..1000){
@@ -14,7 +14,7 @@ foreach my $stu (1..100000){
 	}
 	#print "string done\n";
 	my $position=300;
-	my $threshold=20;
+	my $threshold=30;
 	my $length=5;
 	my %postitions;
 	%{$postitions{"A"}}=make_pos_index(\$string,"A");
@@ -33,14 +33,14 @@ sub score_micro_homolgy {
 	my $count=0;
 	my $lengthhom=1;
 	my $seq;
-	#my $position=$_[2];
-	#my $threshold=$_[1];
-	#my $length=$_[3];
-	#my $postitions=%{$_[0]};
 	my $stuff=0;
 	my $outframe=1;
 	my $inframe=1;
-	RIGTHSTART:foreach my $rightarmstart ($_[2]..($_[2]+$_[1])){		
+	my $limit_right=$_[2]+$_[1];
+	if(($_[2]+$_[1]+$_[3])>length(${$_[4]})){
+	    $limit_right=length(${$_[4]})-$_[3];
+	}
+	RIGTHSTART:foreach my $rightarmstart ($_[2]..($limit_right)){
 		LENGTH:foreach my $length (2..$_[3]){
 			if($lengthhom>0){
 				$lengthhom=0;
@@ -53,9 +53,9 @@ sub score_micro_homolgy {
 					foreach my $letter (@right_seq){
 						if(exists(${${$_[0]}{$letter}}{($_[2]-$stuff+$count)})){
 							$seq.=$letter;
-							$count++;												
+							$count++;
 						}else{
-							next LEFTARM;					
+							next LEFTARM;
 						}
 					}
 					if($count==scalar(@right_seq)){
@@ -66,22 +66,17 @@ sub score_micro_homolgy {
 						}else{
 							$outframe=$outframe+($count*exp(0.1*(-$gaplength)));
 						}
-						#print "(@right_seq): $seq ".scalar(@right_seq)." ".$count." $stuff $position $rightarmstart hit"."\n";
-						#print substr($string,($position-20),40)."\n";
-						#print substr($string,($position-20),(20-$stuff+$count));
-						#print '-' x ($stuff+($rightarmstart-$position-$count)); 
-						#print substr($string,($rightarmstart),20-($rightarmstart-$position))."\n";
 					}else{
 						next LEFTARM;
 					}
-				}	
+				}
 			}else{
 				$lengthhom=1;
-				next RIGTHSTART;		
-			}	
+				next RIGTHSTART;
+			}
 		}
 	}
-	return log($outframe/$inframe);
+	return (10*log($outframe/$inframe));
 }
 
 sub make_pos_index {
