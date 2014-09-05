@@ -1,14 +1,19 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
 
-$dir=shift;
-opendir dir, $dir ;
-foreach $file (sort(readdir(dir))){
+my $dir=shift;
+my $newdir=shift;
+my %name_hash=();
+opendir (my $indir, $dir );
+foreach my $file (sort(readdir($indir))){
 	if($file=~m/(.+)\.tif/){
-		$name=$newname=$1;
+		my $name= my $newname=$1;
 		$name=~s/\s/\\ /g;
 		$name=~s/([\(\)])/\\$1/g;
 		$newname=~s/\W//g;	
 		$name_hash{$name}++;		
-		system("mv $dir/$name.tif $dir/$newname.tif");
+		system("cp $dir/$name.tif $newdir/$newname.tif");
 	}
 }
 print "done\n";
