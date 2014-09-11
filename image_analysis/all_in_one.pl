@@ -3,16 +3,25 @@ use Parallel::ForkManager;
 use Sys::Info;
 use Sys::Info::Constants qw( :device_cpu );
 use Capture::Tiny ':all';
+use File::Find;
 
-$infolder=$ARGV[0];
-$outfolder=$ARGV[1];
+my $infolder=$ARGV[0];
+$pid=0;
+opendir $bigindir, $infolder;
 
-if (!(-d $outfolder)) {
-	system('mkdir '.$outfolder);
+foreach my $subfolder (readdir($bigindir)){
+	if (-d $infolder."/".$subfolder
+	    && !(-d "/var/www/live_images/test_images/".$subfolder)
+	#    && !(kill 0, $pid)
+	    ) 
+	{
+		my $outfolder="/var/www/live_images/test_images/".$subfolder;
+		if (!(-d $outfolder)) {
+			system('mkdir '.$outfolder);
+		}
+		start_off_image_analysis ("/home/mount/fheigwer/analysis/image_analysis/image_analysis_ERC.R",$infolder."/".$subfolder,$outfolder,384,"DAPI.tif","Cy3.tif","FITC.tif",40);
+	}	
 }
-
-start_off_image_analysis ("~/image_analysis/EBImage_pipeline_Mamma.R",$infolder,$outfolder,384,"fld1wvDAPIDAPI.tif","fld1wvCy3Cy3.tif","fld1wvCy5Cy5.tif",40);
-
 
 #########################################################################################
 #name:      remove all image files in folder
@@ -23,8 +32,8 @@ start_off_image_analysis ("~/image_analysis/EBImage_pipeline_Mamma.R",$infolder,
 #########################################################################################
 sub rename_tifs_in_folder {
 	my $indir=$_[0];
-	opendir dir, $indir or die print "folder ".$indir." not found";
-	foreach $file (sort(readdir(dir))){
+	opendir $dir, $indir or die print "folder ".$indir." not found";
+	foreach $file (sort(readdir($dir))){
 		if($file=~m/(.+)\.tif/ && -e $indir.'/'.$file && !(-z $indir.'/'.$file)){
 			$name=$newname=$1;
 			$name=~s/\s/\\ /g;
@@ -35,10 +44,26 @@ sub rename_tifs_in_folder {
 			}
 		}
 	}
-	closedir dir;
+	closedir $dir;
 	return(1);      
 }
-
+sub wanted {
+	if($_=~m/(.+)\.tif/){
+		my $newname=$1;
+		$newname=~s/\W//g;
+		$newname=~s/^_//g;
+		$newname=~s/fld/_/g;
+		$newname=~s/wv/_/g;
+		$newname=~s/DAPIDAPI/DAPI/g;
+		$newname=~s/Cy3Cy3/Cy3/g;
+		$newname=~s/Cy5Cy5/Cy5/g;
+		$newname=~s/FITCFITC/FITC/g;
+		$newname=~s/0(\d)/$1/g;
+		$File::Find::dir=~s/.+\/(\S+)_.+$/$1/g;
+		rename($_,$File::Find::dir."_$newname.tif");
+		
+	}
+}
 #########################################################################################
 #name:      make a new svg and write svg header
 #function:  writes an browser readable svg header in a given file
@@ -103,76 +128,110 @@ sub make_new_plate_svg {
 		}
 	</style>
 	<g id="'.$id.'">'."\n";
-	if($format==6){
-		my $x=int($tilesize/2);
-		my $y=$x+$tilesize;
-		foreach my $letter ("A","B"){
-			print $output	'<text x="'.$x.'" y="'.$y.'" font-family="Verdana" font-size="12" fill="black" >'.$letter.'</text>'."\n";
-			$y+=$tilesize;		
-		}
-		$y=int($tilesize/2);
-		$x=$y+$tilesize;		
-		foreach my $number (1..3){
-			print $output	'<text x="'.$x.'" y="'.$y.'" font-family="Verdana" font-size="12" fill="black" >'.$number.'</text>'."\n";
-			$x+=$tilesize;
-		}
-	}elsif($format==12){
-		my $x=int($tilesize/2);
-		my $y=$x+$tilesize;
-		foreach my $letter ("A","B","C"){
-			print $output	'<text x="'.$x.'" y="'.$y.'" font-family="Verdana" font-size="12" fill="black" >'.$letter.'</text>'."\n";
-			$y+=$tilesize;		
-		}
-		$y=int($tilesize/2);
-		$x=$y+$tilesize;		
-		foreach my $number (1..4){
-			print $output	'<text x="'.$x.'" y="'.$y.'" font-family="Verdana" font-size="12" fill="black" >'.$number.'</text>'."\n";
-			$x+=$tilesize;
-		}
-	}elsif($format==24){
-		my $x=int($tilesize/2);
-		my $y=$x+$tilesize;
-		foreach my $letter ("A","B","C","D"){
-			print $output	'<text x="'.$x.'" y="'.$y.'" font-family="Verdana" font-size="12" fill="black" >'.$letter.'</text>'."\n";
-			$y+=$tilesize;		
-		}
-		$y=int($tilesize/2);
-		$x=$y+$tilesize;		
-		foreach my $number (1..6){
-			print $output	'<text x="'.$x.'" y="'.$y.'" font-family="Verdana" font-size="12" fill="black" >'.$number.'</text>'."\n";
-			$x+=$tilesize;
-		}
-	}elsif($format==96){
-		my $x=int($tilesize/2);
-		my $y=$x+$tilesize;
-		foreach my $letter ("A","B","C","D","E","F","G","H"){
-			print $output	'<text x="'.$x.'" y="'.$y.'" font-family="Verdana" font-size="12" fill="black" >'.$letter.'</text>'."\n";
-			$y+=$tilesize;		
-		}
-		$y=int($tilesize/2);
-		$x=$y+$tilesize;		
-		foreach my $number (1..12){
-			print $output	'<text x="'.$x.'" y="'.$y.'" font-family="Verdana" font-size="12" fill="black" >'.$number.'</text>'."\n";
-			$x+=$tilesize;
-		}
-	}else{
-		my $x=int($tilesize/2);
-		my $y=$x+$tilesize;
-		foreach my $letter ("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"){
-			print $output	'<text x="'.$x.'" y="'.$y.'" font-family="Verdana" font-size="12" fill="black" >'.$letter.'</text>'."\n";
-			$y+=$tilesize;		
-		}
-		$y=int($tilesize/2);
-		$x=$y+$tilesize;		
-		foreach my $number (1..24){
-			print $output	'<text x="'.$x.'" y="'.$y.'" font-family="Verdana" font-size="12" fill="black" >'.$number.'</text>'."\n";
-			$x+=$tilesize;
-		}
+	my $x=int($tilesize/2);
+	my $y=$x+$tilesize;
+	foreach my $letter ("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"){
+		print $output	'<text x="'.$x.'" y="'.$y.'" font-family="Verdana" font-size="12" fill="black" >'.$letter.'</text>'."\n";
+		$y+=$tilesize;		
+	}
+	$y=int($tilesize/2);
+	$x=$y+$tilesize;		
+	foreach my $number (1..24){
+		print $output	'<text x="'.$x.'" y="'.$y.'" font-family="Verdana" font-size="12" fill="black" >'.$number.'</text>'."\n";
+		$x+=$tilesize;
 	}
 	close $output;
 	return(1);      
 }
-
+#########################################################################################
+#name:      add image to svg
+#function:  adds an base64 encoded image to the prepared svg
+#input:     (path/to/filename base64image /path/to/folder [string] [string] [string]) 
+#output:    svg
+#########################################################################################
+sub add_image_to_svg {
+	my $filename=$_[0];		#complete path to file including filename 
+	my $b64=$_[1];
+	my $output_folder=$_[2];
+	my $tilesize=$_[3];
+	my $format=$_[4];
+	my $barcode=$_[5];
+	my %coords=();
+	my $x=int($tilesize/2);
+	my $y=int($tilesize/2);
+	foreach my $letter ("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"){
+		$y+=int($tilesize/2);
+		$x=int($tilesize/2);			
+		foreach my $number (1..24){
+			foreach my $field (1..2){
+				$x+=int($tilesize/2);
+				my @temp=($x,$y);
+				$coords{$letter.$number."_".$field}=\@temp;
+			}
+		}
+		$y+=int($tilesize/2);
+		$x=int($tilesize/2);
+		foreach my $number (1..24){
+			foreach my $field (3..4){
+				$x+=int($tilesize/2);
+				my @temp=($x,$y);
+				$coords{$letter.$number."_".$field}=\@temp;
+			}
+		}
+	}	
+	open ($output, ">>".$output_folder."/plate_image.svg") or die $!;
+		my $file=$barcode."_".$filename."_segmented.tif";
+		$x=@{$coords{$filename}}[0];
+		$y=@{$coords{$filename}}[1];
+		print $output '<image id="'.$filename.'" x="'.$x.'" y="'.$y.'" onmousemove="ShowTooltip(evt,\''.$filename.'\')" onmouseout="HideTooltip()" onclick="window.open(\''.$file.'\',\'_blank\');" onmouseover="this.style.cursor=\'pointer\'" width="'.(int($tilesize/2)-4).'px" height="'.(int($tilesize/2)-4).'px" xlink:href="data:image/png;base64,'.$b64.'"></image>'."\n";
+	close $output;
+	return(1);      
+}
+#########################################################################################
+#name:      add rect to svg
+#function:  adds an base64 encoded image to the prepared svg
+#input:     (path/to/filename digital_value /path/to/folder [string] [double] [string]) 
+#output:    svg
+#########################################################################################
+sub add_rect_to_svg {
+	my $filename=$_[0];		#complete path to file including filename 
+	my $value=$_[1];
+	my $output_folder=$_[2];
+	my $name=$_[3];
+	my $tilesize=$_[4];
+	my $format=$_[5];
+	my $barcode=$_[6];
+	my %coords=();
+	my $x=int($tilesize/2);
+	my $y=int($tilesize/2);
+	foreach my $letter ("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"){
+		$y+=int($tilesize/2);
+		$x=int($tilesize/2);			
+		foreach my $number (1..24){
+			foreach my $field (1..2){
+				$x+=int($tilesize/2);
+				my @temp=($x,$y);
+				$coords{$letter.$number."_".$field}=\@temp;
+			}
+		}
+		$y+=int($tilesize/2);
+		$x=int($tilesize/2);
+		foreach my $number (1..24){
+			foreach my $field (3..4){
+				$x+=int($tilesize/2);
+				my @temp=($x,$y);
+				$coords{$letter.$number."_".$field}=\@temp;
+			}
+		}
+	}
+	open ($output, ">>".$output_folder."/".$name.".svg") or die $!;
+		my $file=$barcode."_".$filename."_segmented.tif";
+		$x=@{$coords{$filename}}[0];
+		$y=@{$coords{$filename}}[1];
+		print $output '<rect x="'.$x.'" y="'.$y.'" width="'.(int($tilesize/2)-4).'px" height="'.(int($tilesize/2)-4).'px" style="fill:rgb(0,0,0);" onmousemove="ShowTooltip(evt,\''.$value.'\')" onmouseout="HideTooltip()" onclick="window.open(\''.$file.'\',\'_blank\');" onmouseover="this.style.cursor=\'pointer\'" />'."\n";
+	close $output;
+	return(1);      
+}
 #########################################################################################
 #name:      close svg
 #function:  closes an browser readable svg in a given file if closed already than unclose
@@ -191,84 +250,11 @@ sub close_open_svg {
 	}
 	close $FH;	              
 	open my $output ,'>>'.$filename or die $!;
-		print $output '</g></svg>';
+		print $output '</g><rect class="tooltip_bg" id="tooltip_bg" x="0" y="0" rx="4" ry="4" width="30" height="30" visibility="hidden"/><text class="tooltip" id="tooltip" x="0" y="0" visibility="hidden">Tooltip</text></svg>';
 	close $output;
 	return(1);      
 }
-#########################################################################################
-#name:      add image to svg
-#function:  adds an base64 encoded image to the prepared svg
-#input:     (path/to/filename base64image /path/to/folder [string] [string] [string]) 
-#output:    svg
-#########################################################################################
-sub add_image_to_svg {
-	my $filename=$_[0];		#complete path to file including filename 
-	my $b64=$_[1];
-	my $output_folder=$_[2];
-	my $tilesize=$_[3];
-	my $format=$_[4];
-	my %coords=();
-	my $x=0;
-	my $y=0;
-	if($format==6){		
-		foreach my $letter ("A","B"){
-			$y+=$tilesize;	
-			$x=0;	
-			foreach my $number (1..3){
-				$x+=$tilesize;
-				my @temp=($x,$y);
-				$coords{$letter.$number}=\@temp;
-			}
-		}
-	}elsif($format==12){
-		foreach my $letter ("A","B","C"){
-			$y+=$tilesize;
-			$x=0;		
-			foreach my $number (1..4){
-				$x+=$tilesize;
-				my @temp=($x,$y);
-				$coords{$letter.$number}=\@temp;
-			}
-		}
-	}elsif($format==24){
-		foreach my $letter ("A","B","C","D"){
-			$y+=$tilesize;
-			$x=0;		
-			foreach my $number (1..6){
-				$x+=$tilesize;
-				my @temp=($x,$y);
-				$coords{$letter.$number}=\@temp;
-			}
-		}
-	}elsif($format==96){
-		foreach my $letter ("A","B","C","D","E","F","G","H"){
-			$y+=$tilesize;
-			$x=0;		
-			foreach my $number (1..12){
-				$x+=$tilesize;
-				my @temp=($x,$y);
-				$coords{$letter.$number}=\@temp;
-			}
-		}
-	}else{
-		foreach my $letter ("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"){
-			$y+=$tilesize;
-			$x=0;		
-			foreach my $number (1..24){
-				$x+=$tilesize;
-				my @temp=($x,$y);
-				$coords{$letter.$number}=\@temp;
-			}
-		}
-	}
-	open ($output, ">>".$output_folder."/plate_image.svg") or die $!;
-		my $file=$output_folder."/".$filename."_segmented.tif";
-		$x=@{$coords{$filename}}[0];
-		$y=@{$coords{$filename}}[1];
-		print $output '<image id="'.$filename.'" x="'.$x.'" y="'.$y.'" onmousemove="ShowTooltip(evt,\''.$filename.'\')" onmouseout="HideTooltip()" onclick="window.open(\''.$file.'\',\'_blank\');" onmouseover="this.style.cursor=\'pointer\'" width="'.($tilesize-4).'px" height="'.($tilesize-4).'px" xlink:href="data:image/png;base64,'.$b64.'"></image>'."\n";
-	close $output;
-	return(1);      
-}
+
 #########################################################################################
 #name:      create total svg 
 #function:  collects all other svgs as grouped elements and combines them into one single svg
@@ -288,8 +274,8 @@ sub combine_to_svg {
 				{
 					svgDocument = evt.target.ownerDocument;
 				}
-				tooltip = svgDocument.getElementById(\'tooltip\');
-				tooltip_bg = svgDocument.getElementById(\'tooltip_bg\');
+				tooltip = document.getElementById(\'tooltip\');
+				tooltip_bg = document.getElementById(\'tooltip_bg\');
 			}
 			function ShowTooltip(evt, mouseovertext)
 			{
@@ -345,10 +331,10 @@ sub combine_to_svg {
 			text-decoration:none;
 		}
 	</style>'."\n";
-	opendir outdir, $output_folder;
+	opendir $outdir, $output_folder;
 	my $y=25;
 	my $firstfile=0;
-	foreach my $file (readdir(outdir)){		
+	foreach my $file (readdir($outdir)){		
 		my $bool=0;
 		if($file=~m/(.*)\.svg/ && !($file=~m/total.svg/ )){
 			my $name=$1;
@@ -376,86 +362,115 @@ sub combine_to_svg {
 			$firstfile++;
 		}
 	}
-	closedir outdir;
+	closedir $outdir;
 	print $output '<rect class="tooltip_bg" id="tooltip_bg" x="0" y="0" rx="4" ry="4" width="30" height="30" visibility="hidden"/><text class="tooltip" id="tooltip" x="0" y="0" visibility="hidden">Tooltip</text></svg>'."\n";
 	close $output;
 	return(1);      
 }
 #########################################################################################
-#name:      add rect to svg
-#function:  adds an base64 encoded image to the prepared svg
-#input:     (path/to/filename digital_value /path/to/folder [string] [double] [string]) 
+#name:      create total svg 
+#function:  collects all other svgs as grouped elements and combines them into one single svg
+#input:     (/path/to/folder [string]) 
 #output:    svg
 #########################################################################################
-sub add_rect_to_svg {
-	my $filename=$_[0];		#complete path to file including filename 
-	my $value=$_[1];
-	my $output_folder=$_[2];
-	my $name=$_[3];
-	my $tilesize=$_[4];
-	my $format=$_[5];
-	my %coords=();
-	my $x=0;
-	my $y=0;
-	if($format==6){		
-		foreach my $letter ("A","B"){
-			$y+=$tilesize;
-			$x=0;		
-			foreach my $number (1..3){
-				$x+=$tilesize;
-				my @temp=($x,$y);
-				$coords{$letter.$number}=\@temp;
-			}
-		}
-	}elsif($format==12){
-		foreach my $letter ("A","B","C"){
-			$y+=$tilesize;
-			$x=0;		
-			foreach my $number (1..4){
-				$x+=$tilesize;
-				my @temp=($x,$y);
-				$coords{$letter.$number}=\@temp;
-			}
-		}
-	}elsif($format==24){
-		foreach my $letter ("A","B","C","D"){
-			$y+=$tilesize;
-			$x=0;		
-			foreach my $number (1..6){
-				$x+=$tilesize;
-				my @temp=($x,$y);
-				$coords{$letter.$number}=\@temp;
-			}
-		}
-	}elsif($format==96){
-		foreach my $letter ("A","B","C","D","E","F","G","H"){
-			$y+=$tilesize;
-			$x=0;		
-			foreach my $number (1..12){
-				$x+=$tilesize;
-				my @temp=($x,$y);
-				$coords{$letter.$number}=\@temp;
-			}
-		}
-	}else{
-		foreach my $letter ("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"){
-			$y+=$tilesize;
-			$x=0;		
-			foreach my $number (1..24){
-				$x+=$tilesize;
-				my @temp=($x,$y);
-				$coords{$letter.$number}=\@temp;
-			}
+sub combine_to_html {
+	my $output_folder=$_[0];	
+	open ($output, ">".$output_folder."/total.html") or die $!;
+	print $output '<!DOCTYPE html>
+			<html lang="enc">
+			<head>
+			<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+			<meta name="Author" content="Florian Heigwer"><title>Image Surveillance</title>
+			<script type="text/javascript">
+			    function init(evt)
+			    {
+				    if ( window.svgDocument == null )
+				    {
+					    svgDocument = evt.target.ownerDocument;
+				    }
+				    tooltip = svgDocument.getElementById(\'tooltip\');
+				    tooltip_bg = svgDocument.getElementById(\'tooltip_bg\');
+			    }
+			    function ShowTooltip(evt, mouseovertext)
+			    {
+				    tooltip.setAttributeNS(null,"x",evt.clientX+11);
+				    tooltip.setAttributeNS(null,"y",evt.clientY+35);
+				    tooltip.firstChild.data = mouseovertext;
+				    
+				    tooltip_bg.setAttributeNS(null,"x",evt.clientX+8);
+				    tooltip_bg.setAttributeNS(null,"y",evt.clientY+16);
+				    length = tooltip.getComputedTextLength();
+				    tooltip_bg.setAttributeNS(null,"width",length+8);			
+				    
+				    tooltip_bg.setAttributeNS(null,"visibility","visible");
+				    tooltip.setAttributeNS(null,"visibility","visible");
+			    }
+			    function HideTooltip()
+			    {
+				    tooltip.setAttributeNS(null,"visibility","hidden");
+				    tooltip_bg.setAttributeNS(null,"visibility","hidden");
+			    }
+			    function putToTop(evt, whom) {
+				    //get node reference
+				    var element = svgDocument.getElementById(whom);
+				    //appendChild after the last child
+				    element.parentNode.appendChild(element);
+				    element.parentNode.appendChild(tooltip_bg);
+				    element.parentNode.appendChild(tooltip);
+								    
+				    others = svgDocument.getElementsByClassName("clickable");	
+					    for(var i=0 ; i<others.length; i++){
+						    others[i].setAttributeNS(null,"fill","black");	
+					    }
+				    var that = evt.target;
+				    that.setAttributeNS(null,"fill","blue");			
+			    }
+			    function change_plot(feature){
+					var el = document.getElementById(\'plate_container\');
+					el.innerHTML = \'<object id="plate_plot" type="image/svg+xml" width="100%" height="1000" data="\'+feature+\'.svg"></object>\'
+			    
+			    }
+			</script>
+			<style>
+				.tooltip{
+					font-size: 20px;
+				}
+				.tooltip_bg{
+					fill: white;
+					stroke: black;
+					stroke-width: 1;
+					opacity: 0.85;
+				}
+				.clickable { cursor: pointer;  }
+				.clickable:hover { color: blue;  }
+				.clickable:visited {
+					color: red;
+					font-family: Verdana;
+					text-decoration:none;
+				}
+			</style>
+			</head>
+			<body>
+			<select name="feature" id="feature" onchange="change_plot(document.getElementById(\'feature\').value)">'."\n";
+	opendir $outdir, $output_folder;
+	foreach my $file (sort readdir($outdir)){
+		if($file=~m/(.*)\.svg/ && !($file=~m/total.svg/ )){
+			my $name=$1;
+			print $output '<option value=\''.$name.'\' >'.$name.'</option>'."\n";			
 		}
 	}
-	open ($output, ">>".$output_folder."/".$name.".svg") or die $!;
-		my $file=$output_folder."/".$filename."_segmented.tif";
-		$x=@{$coords{$filename}}[0];
-		$y=@{$coords{$filename}}[1];
-		print $output '<rect x="'.$x.'" y="'.$y.'" width="'.($tilesize-4).'px" height="'.($tilesize-4).'px" style="fill:rgb(0,0,0);" onmousemove="ShowTooltip(evt,\''.$value.'\')" onmouseout="HideTooltip()" onclick="window.open(\''.$file.'\',\'_blank\');" onmouseover="this.style.cursor=\'pointer\'" />'."\n";
+	closedir $outdir;
+	print $output '</select>
+			<br>
+			<div id="plate_container">
+			<object id="plate_plot" type="image/svg+xml" width="100%" height="1000" data="plate_image.svg"></object>
+			</div>
+			</body>
+			</html>'."\n";
 	close $output;
 	return(1);      
 }
+
 #########################################################################################
 #name:      update tile colors on plate
 #function:  parses an svg value plate plot for the values and adjusts the colors 
@@ -516,7 +531,8 @@ sub adjust_colors_in_svg {
 #########################################################################################
 sub start_off_image_analysis {
 	my $path_to_script=$_[0];
-	my $input_folder=$_[1];
+	my $input_folder=my $barcode= $_[1];
+	$barcode=~s/.+\/(\S+)_.+$/$1/g;
 	my $output_folder=$_[2];
 	my $format=$_[3];
 	my $nuclei_scheme=$_[4];	#fld1wvDAPIDAPI.tif
@@ -525,87 +541,78 @@ sub start_off_image_analysis {
 	my $tilesize=$_[7];
 	my $pm = new Parallel::ForkManager((((Sys::Info->new)->device( CPU => %options ))->count));
 	my %Q=();
-	if($format==6){
-		foreach my $letter ("A","B"){
-			foreach my $number (1..3){
-				my @temp=($letter,$number);
-				$Q{$letter.$number} = \@temp;		
+	foreach my $letter ("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"){		
+		foreach my $number (1..24){
+			foreach my $field (1..4){
+				my @temp=($letter,$number,$field);
+				$Q{$letter.$number."_".$field} = \@temp;
 			}
 		}
-	}elsif($format==12){
-		foreach my $letter ("A","B","C"){
-			foreach my $number (1..4){
-				my @temp=($letter,$number);
-				$Q{$letter.$number} = \@temp;
-			}
-		}
-	}elsif($format==24){
-		foreach my $letter ("A","B","C","D"){
-			foreach my $number (1..6){
-				my @temp=($letter,$number);
-				$Q{$letter.$number} = \@temp;
-			}	
-		}			
-	}elsif($format==96){
-		foreach my $letter ("A","B","C","D","E","F","G","H"){
-			foreach my $number (1..12){
-				my @temp=($letter,$number);
-				$Q{$letter.$number} = \@temp;
-			}
-		}			
-	}else{
-		foreach my $letter ("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"){		
-			foreach my $number (1..24){
-				my @temp=($letter,$number);
-				$Q{$letter.$number} = \@temp;
-			}
-		}
-	}	
-	unless(fork){
-		my $sub_pm = new Parallel::ForkManager((((Sys::Info->new)->device( CPU => %options ))->count));
+	}
+		
+	unless($pid=fork){
+		#my $sub_pm = new Parallel::ForkManager((((Sys::Info->new)->device( CPU => %options ))->count));
 		while(%Q){
-			rename_tifs_in_folder($input_folder);
+			#find(\&wanted,$input_folder);
 			#print join("_",keys(%Q))."\n";
-			foreach my $key (keys(%Q)){
+			foreach my $key (sort keys(%Q)){
 				my $letter=@{$Q{$key}}[0];
 				my $number=@{$Q{$key}}[1];
-				if(	(-e $input_folder."/".$letter.$number.$nuclei_scheme) 
-					&& (-e $input_folder."/".$letter.$number.$body_scheme) 
-					&& (-e $input_folder."/".$letter.$number.$extra_scheme)
-					&& !(-z $input_folder."/".$letter.$number.$nuclei_scheme) 
-					&& !(-z $input_folder."/".$letter.$number.$body_scheme) 
-					&& !(-z $input_folder."/".$letter.$number.$extra_scheme)
-					&& !(-e $output_folder."/".$letter.$number.".tab")
+				my $field=@{$Q{$key}}[2];
+				my $queue_length=capture_stdout {system("qstat -B | grep b ")};
+				$queue_length=~s/\S+\s+\S+\s+\S+\s+(\d+).*$/$1/;
+				if(	(-e $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme) 
+					&& (-e $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$body_scheme) 
+					&& (-e $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$extra_scheme)
+					&& !(-z $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme) 
+					&& !(-z $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$body_scheme) 
+					&& !(-z $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$extra_scheme)
+					&& !(-e $output_folder."/".$barcode."_".$letter.$number.".tab")
+					&& $queue_length<20
+					
 				){
 					delete $Q{$key};
-					$sub_pm->start and next;
+					#$sub_pm->start and next;
 						#do the raw analysis either with R ,CP, or Hcell
-							system("/home/mount/fheigwer/R-3.0.2/bin/R -f $path_to_script --slave --args ".$input_folder."/".$letter.$number.$nuclei_scheme.' '.$input_folder."/".$letter.$number.$body_scheme.' '.$input_folder."/".$letter.$number.$extra_scheme.' '.$output_folder.' '.$letter.$number); 
+							#system("/usr/bin/R -f $path_to_script --slave --args ".	$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme.' '.
+							#							$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$body_scheme.' '.
+							#							$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$extra_scheme.' '.
+							#							$output_folder.' '.
+							#							$barcode."_".$letter.$number."_".$field);
+							system(" echo '/usr/local/bin/R -f $path_to_script --slave --args ".$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme.' '.
+														$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$body_scheme.' '.
+														$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$extra_scheme.' '.
+														$output_folder.' '.
+														$barcode."_".$letter.$number."_".$field."' | qsub "); 
+							
+							
 							#system('/usr/bin/hcell -f /Users/b110-mm06/Desktop/Projects/image_analysis/KristinasStuff/R_Files/EBImage_pipeline.R --slave --args '.$letter.$number.'fld1wvDAPIDAPI.tif '.$letter.$number.'fld1wvCy3Cy3.tif '.$letter.$number.'fld1wvCy5Cy5.tif'); 
 							#system('/usr/bin/CellProfiler -f /Users/b110-mm06/Desktop/Projects/image_analysis/KristinasStuff/R_Files/EBImage_pipeline.R --slave --args '.$letter.$number.'fld1wvDAPIDAPI.tif '.$letter.$number.'fld1wvCy3Cy3.tif '.$letter.$number.'fld1wvCy5Cy5.tif'); 
-					$sub_pm->finish();		
+					#$sub_pm->finish();		
 					
-				}elsif(-e $output_folder."/".$letter.$number.".tab"){
+				}elsif(-e $output_folder."/".$barcode."_".$letter.$number."_".$field.".tab"){
 					delete $Q{$key};
 				}
+				sleep 3;
 			}
-			sleep 30;
+			sleep 10;
 		}
-		$sub_pm->wait_all_children();
+		#$sub_pm->wait_all_children();
 	}else{
 		
 		while(%Q){
-			foreach my $key (keys(%Q)){				
+			foreach my $key (sort keys(%Q)){				
 				my $letter=@{$Q{$key}}[0];
 				my $number=@{$Q{$key}}[1];
-				if(	(-e $output_folder."/".$letter.$number.".tab")){
+				my $field=@{$Q{$key}}[2];
+				if(	(-e $output_folder."/".$barcode."_".$letter.$number."_".$field.".tab")){
 					#convert the R result
-						$base64_string = capture_stdout {system('convert '.$output_folder."/".$letter.$number.'_segmented.tif -thumbnail 100x100 png:- | openssl enc -base64  ')}; #-out '.$output_folder.'/'.$letter.$number.'.b64'
+						$base64_string = capture_stdout {system('convert '.$output_folder."/".$barcode."_".$letter.$number."_".$field.'_segmented.tif -thumbnail 100x100 png:- | openssl enc -base64  ')}; #-out '.$output_folder.'/'.$letter.$number.'.b64'
 					#read in the tab-delim line for this image
 						my $count=0;
 						my @names=();
 						my @result=();
-						open $result_tab , $output_folder."/".$letter.$number.".tab";
+						open $result_tab , $output_folder."/".$barcode."_".$letter.$number."_".$field.".tab";
 							while(<$result_tab>){
 								chomp $_;
 								if($count<=0){
@@ -618,11 +625,11 @@ sub start_off_image_analysis {
 						close $result_tab;								
 						if(!(-e $output_folder."/plate_image.svg")){
 							make_new_plate_svg($output_folder."/plate_image",$format,$tilesize,"plate_image");	#start new plate svg file
-							add_image_to_svg($letter.$number,$base64_string,$output_folder,$tilesize,$format);
+							add_image_to_svg($letter.$number."_".$field,$base64_string,$output_folder,$tilesize,$format,$barcode);
 							close_open_svg($output_folder."/plate_image.svg");
 						}else{
 							close_open_svg($output_folder."/plate_image.svg");
-							add_image_to_svg($letter.$number,$base64_string,$output_folder,$tilesize,$format);
+							add_image_to_svg($letter.$number."_".$field,$base64_string,$output_folder,$tilesize,$format,$barcode);
 							close_open_svg($output_folder."/plate_image.svg");
 						}
 						my $element=0;
@@ -631,12 +638,12 @@ sub start_off_image_analysis {
 							$element++;
 							if(!(-e $output_folder."/".$key.".svg")){
 								make_new_plate_svg($output_folder."/".$key,$format,$tilesize,$key);	#start new plate svg file
-								add_rect_to_svg($letter.$number,$value,$output_folder,$key,$tilesize,$format);
+								add_rect_to_svg($letter.$number."_".$field,$value,$output_folder,$key,$tilesize,$format,$barcode);
 								adjust_colors_in_svg($output_folder,$key);
 								close_open_svg($output_folder."/".$key.".svg");
 							}else{
 								close_open_svg($output_folder."/".$key.".svg");
-								add_rect_to_svg($letter.$number,$value,$output_folder,$key,$tilesize,$format);
+								add_rect_to_svg($letter.$number."_".$field,$value,$output_folder,$key,$tilesize,$format,$barcode);
 								adjust_colors_in_svg($output_folder,$key);
 								close_open_svg($output_folder."/".$key.".svg");
 							}
@@ -644,8 +651,10 @@ sub start_off_image_analysis {
 					delete $Q{$key};
 				}
 			}
-			sleep 30;
-			combine_to_svg($output_folder);			
+			sleep 10;
+			#combine_to_svg($output_folder);
+			combine_to_html($output_folder);
+			system("chmod -R a+r ".$output_folder."")
 		}
 	}
 }
