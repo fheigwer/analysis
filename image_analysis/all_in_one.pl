@@ -11,15 +11,16 @@ opendir $bigindir, $infolder;
 
 foreach my $subfolder (readdir($bigindir)){
 	if (-d $infolder."/".$subfolder
-	    && !(-d "/var/www/live_images/test_images/".$subfolder)
+	    #&& !(-d "/Users/b110-mm06/Sites/test_images_2/".$subfolder)
 	#    && !(kill 0, $pid)
+		&& !($subfolder=~m/^\./)
 	    ) 
 	{
-		my $outfolder="/var/www/live_images/test_images/".$subfolder;
+		my $outfolder="/Users/b110-mm06/Sites/test_images/".$subfolder;
 		if (!(-d $outfolder)) {
 			system('mkdir '.$outfolder);
 		}
-		start_off_image_analysis ("/home/mount/fheigwer/analysis/image_analysis/image_analysis_ERC.R",$infolder."/".$subfolder,$outfolder,384,"DAPI.tif","Cy3.tif","FITC.tif",40);
+		start_off_image_analysis ("~/Desktop/analysis/image_analysis/image_analysis_ERC.R",$infolder."/".$subfolder,$outfolder,384,"DAPI.tif","Cy3.tif","FITC.tif",40);
 	}	
 }
 
@@ -550,8 +551,8 @@ sub start_off_image_analysis {
 		}
 	}
 		
-	unless($pid=fork){
-		#my $sub_pm = new Parallel::ForkManager((((Sys::Info->new)->device( CPU => %options ))->count));
+	unless(fork){
+		my $sub_pm = new Parallel::ForkManager(8);#(((Sys::Info->new)->device( CPU => %options ))->count)
 		while(%Q){
 			#find(\&wanted,$input_folder);
 			#print join("_",keys(%Q))."\n";
@@ -559,45 +560,46 @@ sub start_off_image_analysis {
 				my $letter=@{$Q{$key}}[0];
 				my $number=@{$Q{$key}}[1];
 				my $field=@{$Q{$key}}[2];
-				my $queue_length=capture_stdout {system("qstat -B | grep b ")};
-				$queue_length=~s/\S+\s+\S+\s+\S+\s+(\d+).*$/$1/;
+				#my $queue_length=capture_stdout {system("qstat -B | grep b ")};
+				print $output_folder."/".$barcode."_".$letter.$number."_".$field.".tab"."\n";
+				#$queue_length=~s/\S+\s+\S+\s+\S+\s+(\d+).*$/$1/;
 				if(	(-e $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme) 
 					&& (-e $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$body_scheme) 
 					&& (-e $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$extra_scheme)
 					&& !(-z $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme) 
 					&& !(-z $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$body_scheme) 
 					&& !(-z $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$extra_scheme)
-					&& !(-e $output_folder."/".$barcode."_".$letter.$number.".tab")
-					&& $queue_length<20
+					&& !(-e $output_folder."/".$barcode."_".$letter.$number."_".$field.".tab")
+					#&& $queue_length<20
 					
 				){
 					delete $Q{$key};
-					#$sub_pm->start and next;
+					$sub_pm->start and next;
 						#do the raw analysis either with R ,CP, or Hcell
-							#system("/usr/bin/R -f $path_to_script --slave --args ".	$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme.' '.
-							#							$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$body_scheme.' '.
-							#							$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$extra_scheme.' '.
-							#							$output_folder.' '.
-							#							$barcode."_".$letter.$number."_".$field);
-							system(" echo '/usr/local/bin/R -f $path_to_script --slave --args ".$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme.' '.
+							system("/usr/bin/R -f $path_to_script --slave --args ".	$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme.' '.
 														$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$body_scheme.' '.
 														$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$extra_scheme.' '.
 														$output_folder.' '.
-														$barcode."_".$letter.$number."_".$field."' | qsub "); 
+														$barcode."_".$letter.$number."_".$field);
+							#system(" echo '/usr/local/bin/R -f $path_to_script --slave --args ".$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme.' '.
+							#							$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$body_scheme.' '.
+							#							$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$extra_scheme.' '.
+							#							$output_folder.' '.
+							#							$barcode."_".$letter.$number."_".$field."' | qsub "); 
 							
 							
 							#system('/usr/bin/hcell -f /Users/b110-mm06/Desktop/Projects/image_analysis/KristinasStuff/R_Files/EBImage_pipeline.R --slave --args '.$letter.$number.'fld1wvDAPIDAPI.tif '.$letter.$number.'fld1wvCy3Cy3.tif '.$letter.$number.'fld1wvCy5Cy5.tif'); 
 							#system('/usr/bin/CellProfiler -f /Users/b110-mm06/Desktop/Projects/image_analysis/KristinasStuff/R_Files/EBImage_pipeline.R --slave --args '.$letter.$number.'fld1wvDAPIDAPI.tif '.$letter.$number.'fld1wvCy3Cy3.tif '.$letter.$number.'fld1wvCy5Cy5.tif'); 
-					#$sub_pm->finish();		
+					$sub_pm->finish();		
 					
 				}elsif(-e $output_folder."/".$barcode."_".$letter.$number."_".$field.".tab"){
 					delete $Q{$key};
 				}
-				sleep 3;
+				#sleep 3;
 			}
-			sleep 10;
+			#sleep 10;
 		}
-		#$sub_pm->wait_all_children();
+		$sub_pm->wait_all_children();
 	}else{
 		
 		while(%Q){

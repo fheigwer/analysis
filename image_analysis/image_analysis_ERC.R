@@ -66,7 +66,7 @@ if(max(bwlabel(thresh(TEST_IMAGE_nuclei,w=50,h=50,offset=0.05)))<400){
 
 writeImage(res, file=paste(dir,"/",identifier,"_segmented",".tif",sep=""), type="tiff", quality = 100, 8 )
 
-
+if(max(cell_bodies_objects)>0){
 actin_features=cbind(
   (computeFeatures.basic(cell_bodies_objects,basic.quantiles=c(0),refnames="actin",ref=TEST_IMAGE_actin_raw)),
   (computeFeatures.shape(cell_bodies_objects,ref=TEST_IMAGE_actin_raw)),
@@ -91,4 +91,9 @@ cell_features=cbind(tubulin_features,actin_features,DNA_features)
 save(cell_features,file=paste(dir,"/",identifier,"_single_cell.RData",sep=""))
 
 cell_features=c("cells"=max(cell_bodies_objects),colMeans(cell_features))
-write.table(t(cell_features),file=paste(dir,"/",identifier,".tab",sep=""),sep="\t",quote=FALSE,row.names=FALSE)
+    write.table(t(cell_features),file=paste(dir,"/",identifier,".tab",sep=""),sep="\t",quote=FALSE,row.names=FALSE)
+}else{
+    cell_features=rep(0,times=61)
+    names(cell_features)=c("cells","tubulin.b.mean","tubulin.b.sd","tubulin.b.mad","tubulin.b.q0","tubulin.h.asm.s1","tubulin.h.con.s1","tubulin.h.cor.s1","tubulin.h.var.s1","tubulin.h.idm.s1","tubulin.h.sav.s1","tubulin.h.sva.s1","tubulin.h.sen.s1","tubulin.h.ent.s1","tubulin.h.dva.s1","tubulin.h.den.s1","tubulin.h.f12.s1","tubulin.h.f13.s1","tubulin.h.asm.s2","tubulin.h.con.s2","tubulin.h.cor.s2","tubulin.h.var.s2","tubulin.h.idm.s2","tubulin.h.sav.s2","tubulin.h.sva.s2","tubulin.h.sen.s2","tubulin.h.ent.s2","tubulin.h.dva.s2","tubulin.h.den.s2","tubulin.h.f12.s2","tubulin.h.f13.s2","actin.b.mean","actin.b.sd","actin.b.mad","actin.b.q0","actin.s.area","actin.s.perimeter","actin.s.radius.mean","actin.s.radius.sd","actin.s.radius.min","actin.s.radius.max","actin.m.cx","actin.m.cy","actin.m.majoraxis","actin.m.eccentricity","actin.m.theta","DNA.b.mean","DNA.b.sd","DNA.b.mad","DNA.b.q0","DNA.s.area","DNA.s.perimeter","DNA.s.radius.mean","DNA.s.radius.sd","DNA.s.radius.min","DNA.s.radius.max","DNA.m.cx","DNA.m.cy","DNA.m.majoraxis","DNA.m.eccentricity","DNA.m.theta")
+    write.table(t(cell_features),file=paste(dir,"/",identifier,".tab",sep=""),sep="\t",quote=FALSE,row.names=FALSE)
+}

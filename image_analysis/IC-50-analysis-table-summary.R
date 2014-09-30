@@ -94,9 +94,9 @@ for(i in 1:nrow(Resultmatrix_1)){
     }
   }
   
-  par(mfrow=c(4,4))
-  for(i in correlating_features){  
-      plot(log(conc[c(1:19,21,22)]),Resultmatrix_1[i,c(1:19,21,22)],type="b",sub=i,ylab=i,ylim=c(0,1))
+  par(mfrow=c(1,1))
+  for(i in correlating_features){   
+      plot(log(conc[c(1:19,21,22)]),Resultmatrix_1[i,c(1:19,21,22)],type="b",ylab=i,xlab="log[PD-0325901 nM]",ylim=c(0,1),xlim=c(3,-12))
        lines(log(conc[c(1:19,21,22)]),Resultmatrix_2[i,c(1:19,21,22)],type="b",col="red")
   }
 
@@ -140,5 +140,9 @@ row.names(test1)=c()
 mdl=drm(cells ~ conc, data = test1, fct = LL.4(names=c("Slope","Lower Limit","Upper Limit", "ED50")))
 ED(mdl,50,interval="delta")*1000
 plot(mdl,sub="2-23 wells independend -> model")
+
+
+
+
 
 
