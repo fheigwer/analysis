@@ -2,21 +2,21 @@
 library(EBImage)
 args=commandArgs(trailingOnly = TRUE)
 options(warn=-1)
-nuc_image_name=args[1] 
-body_image_name=args[2] 
-mito_image_name=args[3]
-dir=args[4]; 
-identifier=args[5]; 
+nuc_image_name="/Volumes/Macintosh\ HD/Users/b110-mm06/Desktop/Projects/time_resolved_sgi/PD-0325901-EC50-Image-based/IC-50-images/time_resolved_1/time_resolved_C12_2_DAPI.tif"#args[1] 
+body_image_name="/Volumes/Macintosh\ HD/Users/b110-mm06/Desktop/Projects/time_resolved_sgi/PD-0325901-EC50-Image-based/IC-50-images/time_resolved_1/time_resolved_C12_2_Cy3.tif"#args[2] 
+mito_image_name="/Volumes/Macintosh\ HD/Users/b110-mm06/Desktop/Projects/time_resolved_sgi/PD-0325901-EC50-Image-based/IC-50-images/time_resolved_1/time_resolved_C12_2_FITC.tif"#args[3]
+dir=getwd()#args[4]; 
+identifier="stuff"#args[5]; 
 
-TEST_IMAGE_nuclei=TEST_IMAGE_nuclei_raw=readImage(nuc_image_name)[500:1500,500:1500]
+TEST_IMAGE_nuclei=TEST_IMAGE_nuclei_raw=readImage(nuc_image_name)#[500:1500,500:1500]
 TEST_IMAGE_nuclei=TEST_IMAGE_nuclei/max(TEST_IMAGE_nuclei)
 TEST_IMAGE_nuclei=gblur(1-(log(TEST_IMAGE_nuclei)/min(log(TEST_IMAGE_nuclei))),sigma=1)
 
-TEST_IMAGE_actin=TEST_IMAGE_actin_raw=readImage(body_image_name)[500:1500,500:1500]
+TEST_IMAGE_actin=TEST_IMAGE_actin_raw=readImage(body_image_name)#[500:1500,500:1500]
 TEST_IMAGE_actin=TEST_IMAGE_actin/max(TEST_IMAGE_actin)
 TEST_IMAGE_actin=gblur(1-(log(TEST_IMAGE_actin)/min(log(TEST_IMAGE_actin))),sigma=1)
 
-TEST_IMAGE_tubulin=TEST_IMAGE_tubulin_raw=readImage(mito_image_name)[500:1500,500:1500]
+TEST_IMAGE_tubulin=TEST_IMAGE_tubulin_raw=readImage(mito_image_name)#[500:1500,500:1500]
 TEST_IMAGE_tubulin=TEST_IMAGE_tubulin/max(TEST_IMAGE_tubulin)
 TEST_IMAGE_tubulin=gblur(1-(log(TEST_IMAGE_tubulin)/min(log(TEST_IMAGE_tubulin))),sigma=1)
 
@@ -70,17 +70,19 @@ if(max(cell_bodies_objects)>0){
 actin_features=cbind(
   (computeFeatures.basic(cell_bodies_objects,basic.quantiles=c(0),refnames="actin",ref=TEST_IMAGE_actin_raw)),
   (computeFeatures.shape(cell_bodies_objects,ref=TEST_IMAGE_actin_raw)),
-  (computeFeatures.moment(cell_bodies_objects,ref=TEST_IMAGE_actin_raw))
+  (computeFeatures.moment(cell_bodies_objects,ref=TEST_IMAGE_actin_raw)),
+  (computeFeatures.haralick(cell_bodies_objects,ref=TEST_IMAGE_actin_raw,haralick.scales=c(1)))
 )
 
 DNA_features=cbind(
   (computeFeatures.basic(nuclei_objects,basic.quantiles=c(0),refnames="nuclei",ref=TEST_IMAGE_nuclei_raw)),
   (computeFeatures.shape(nuclei_objects,ref=TEST_IMAGE_nuclei_raw)),
-  (computeFeatures.moment(nuclei_objects,ref=TEST_IMAGE_nuclei_raw))
+  (computeFeatures.moment(nuclei_objects,ref=TEST_IMAGE_nuclei_raw)),
+  (computeFeatures.haralick(nuclei_objects,ref=TEST_IMAGE_nuclei_raw,haralick.scales=c(1)))
 )
 tubulin_features=cbind(
   (computeFeatures.basic(cell_bodies_objects,basic.quantiles=c(0),refnames="tubulin",ref=TEST_IMAGE_tubulin_raw)),
-  (computeFeatures.haralick(cell_bodies_objects,ref=TEST_IMAGE_tubulin_raw))
+  (computeFeatures.haralick(cell_bodies_objects,ref=TEST_IMAGE_tubulin_raw,haralick.scales=c(1)))
 )
 
 colnames(tubulin_features)=paste("tubulin",colnames(tubulin_features),sep=".")
@@ -89,6 +91,8 @@ colnames(DNA_features)=paste("DNA",colnames(DNA_features),sep=".")
 cell_features=cbind(tubulin_features,actin_features,DNA_features)
 
 save(cell_features,file=paste(dir,"/",identifier,"_single_cell.RData",sep=""))
+
+aggregate(cell_features,var())
 
 cell_features=c("cells"=max(cell_bodies_objects),colMeans(cell_features))
     write.table(t(cell_features),file=paste(dir,"/",identifier,".tab",sep=""),sep="\t",quote=FALSE,row.names=FALSE)

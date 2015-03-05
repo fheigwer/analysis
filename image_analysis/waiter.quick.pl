@@ -25,16 +25,16 @@ while(%Q){
             my $letter=@{$Q{$key}}[0];
             my $number=@{$Q{$key}}[1];
             my $field=@{$Q{$key}}[2];
-            if(-e $output_folder."/".$barcode."_".$letter.$number."_".$field.".tab"){
+            if(-e $output_folder."/".$barcode."_".$letter.$number."_".$field.".qtab"){
             #convert the R result
                     delete $Q{$key};
-                   # $base64_string = capture_stdout {system('convert '.$output_folder."/".$barcode."_".$letter.$number."_".$field.'_segmented.tif -thumbnail 100x100 png:- | openssl enc -base64  ')}; #-out '.$output_folder.'/'.$letter.$number.'.b64'
-                  #  system("chmod -R a+r ".$output_folder."/".$barcode."_".$letter.$number."_".$field.'_segmented.tif ');
+                    $base64_string = capture_stdout {system('convert '.$output_folder."/".$barcode."_".$letter.$number."_".$field.'_segmented.tif -thumbnail 50x50 png:- | openssl enc -base64  ')}; #-out '.$output_folder.'/'.$letter.$number.'.b64'
+                    system("chmod -R a+r ".$output_folder."/".$barcode."_".$letter.$number."_".$field.'_segmented.tif ');
             #read in the tab-delim line for this image
                     my $count=0;
                     my @names=();
                     my @result=();
-                    open $result_tab , $output_folder."/".$barcode."_".$letter.$number."_".$field.".tab";
+                    open $result_tab , $output_folder."/".$barcode."_".$letter.$number."_".$field.".qtab";
                             while(<$result_tab>){
                                     chomp $_;
                                     if($count<=0){
@@ -45,15 +45,15 @@ while(%Q){
                                     }		
                             }
                     close $result_tab;								
-                    #if(!(-e $output_folder."/plate_image.svg")){
-                     #       make_new_plate_svg($output_folder."/plate_image",$format,$tilesize,"plate_image");	#start new plate svg file
-                      #      add_image_to_svg($letter.$number."_".$field,$base64_string,$output_folder,$tilesize,$format,$barcode);
-                      #      close_svg($output_folder."/plate_image.svg");
-                    #}else{
-                     #       open_svg($output_folder."/plate_image.svg");
-                      #      add_image_to_svg($letter.$number."_".$field,$base64_string,$output_folder,$tilesize,$format,$barcode);
-                       #     close_svg($output_folder."/plate_image.svg");
-                    #}
+                    if(!(-e $output_folder."/plate_image.svg")){
+                            make_new_plate_svg($output_folder."/plate_image",$format,$tilesize,"plate_image");	#start new plate svg file
+                            add_image_to_svg($letter.$number."_".$field,$base64_string,$output_folder,$tilesize,$format,$barcode);
+                            close_svg($output_folder."/plate_image.svg");
+                    }else{
+                            open_svg($output_folder."/plate_image.svg");
+                            add_image_to_svg($letter.$number."_".$field,$base64_string,$output_folder,$tilesize,$format,$barcode);
+                            close_svg($output_folder."/plate_image.svg");
+                    }
                     my $element=0;
                     foreach my $key (@names){
                             my $value=$result[$element];							
@@ -240,7 +240,7 @@ sub add_image_to_svg {
 		my $file=$barcode."_".$filename."_segmented.tif";
 		$x=@{$coords{$filename}}[0];
 		$y=@{$coords{$filename}}[1];
-		print $output '<image id="'.$filename.'" x="'.$x.'" y="'.$y.'" id="'.$filename.'" onmousemove="ShowTooltip(evt,\''.$filename.'\')" onmouseout="HideTooltip()" onclick="window.open(\''.$file.'\',\'_blank\');" onmouseover="this.style.cursor=\'pointer\'" width="'.(int($tilesize/2)-4).'px" height="'.(int($tilesize/2)-4).'px" xlink:href="data:image/png;base64,'.$b64.'"></image>'."\n";
+		print $output '<image x="'.$x.'" y="'.$y.'" id="'.$filename.'" onmousemove="ShowTooltip(evt,\''.$filename.'\')" onmouseout="HideTooltip()" onclick="window.open(\''.$file.'\',\'_blank\');" onmouseover="this.style.cursor=\'pointer\'" width="'.(int($tilesize/2)-4).'px" height="'.(int($tilesize/2)-4).'px" xlink:href="data:image/png;base64,'.$b64.'"></image>'."\n";
 	close $output;
 	return(1);      
 }

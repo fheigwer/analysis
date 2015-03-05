@@ -20,7 +20,7 @@ foreach my $subfolder (readdir($bigindir)){
 		if (!(-d $outfolder)) {
 			system('mkdir '.$outfolder);
 		}
-		start_off_image_analysis ("/data/scripts/image_analysis/image_analysis_ERC.v2.R",$infolder."/".$subfolder,$outfolder,384,"DAPI.tif","Cy3.tif","FITC.tif",40);
+		start_off_image_analysis ("/data/scripts/image_analysis/image_analysis_ERC.v2.short.R",$infolder."/".$subfolder,$outfolder,384,"DAPI.tif",40);
 	}	
 }
 
@@ -37,9 +37,7 @@ sub start_off_image_analysis {
 	my $output_folder=$_[2];
 	my $format=$_[3];
 	my $nuclei_scheme=$_[4];	#fld1wvDAPIDAPI.tif
-	my $body_scheme=$_[5];		#fld1wvCy3Cy3.tif
-	my $extra_scheme=$_[6];		#fld1wvCy5Cy5.tif
-	my $tilesize=$_[7];
+	my $tilesize=$_[5];
 	my %Q=();
 	foreach my $letter ("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"){		
 		foreach my $number (1..24){
@@ -50,9 +48,8 @@ sub start_off_image_analysis {
 		}
 	}
 	
-#		system('echo \'perl /data/scripts/image_analysis/waiter.pl '.$barcode.' '.$output_folder.' '.$tilesize.' '.$format.'\' | qsub -l walltime=12:00:00 ');
-	
-#	my $sub_pm = new Parallel::ForkManager(3);#((Sys::Info->new)->device( CPU => %options ))->count);
+		system('echo \'perl /data/scripts/image_analysis/waiter.quick.pl '.$barcode.' '.$output_folder.' '.$tilesize.' '.$format.'\' | qsub -l walltime=12:00:00 ');
+	#my $sub_pm = new Parallel::ForkManager(3);#((Sys::Info->new)->device( CPU => %options ))->count);
 		while(%Q){
 			foreach my $key (sort keys(%Q)){
 				my $letter=@{$Q{$key}}[0];
@@ -62,23 +59,15 @@ sub start_off_image_analysis {
 				#print $output_folder."/".$barcode."_".$letter.$number."_".$field.".tab"."\n";
 				$queue_length=~s/\S+\s+\S+\s+\S+\s+(\d+).*$/$1/;
 				if(	(-e $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme) 
-					&& (-e $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$body_scheme) 
-					&& (-e $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$extra_scheme)
 					&& !(-z $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme) 
-					&& !(-z $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$body_scheme) 
-					&& !(-z $input_folder."/".$barcode."_".$letter.$number."_".$field."_".$extra_scheme)
-					&& !(-e $output_folder."/".$barcode."_".$letter.$number."_".$field.".tab")
+					&& !(-e $output_folder."/".$barcode."_".$letter.$number."_".$field.".qtab")
 					&& $queue_length<200
 					
 				){	
 				  delete $Q{$key};
 					#$sub_pm->start and next;
 						#do the raw analysis either with R ,CP, or Hcell
-						       system('echo \'/opt/software/R-3.1.2/bin/R -f '.$path_to_script.' --slave --args '.	$input_folder.'/'.$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme.' '.
-														$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$body_scheme.' '.
-														$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$extra_scheme.' '.
-														$output_folder.' '.
-														$barcode."_".$letter.$number."_".$field.' \' | qsub ' );
+							 system('echo "/opt/software/R-3.1.2/bin/R -f '.$path_to_script.' --slave --args '.$input_folder.'/'.$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme.' '.$output_folder.' '.$barcode."_".$letter.$number."_".$field.'" | qsub ' );
 							#system(" echo '/usr/local/bin/R -f $path_to_script --slave --args ".$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$nuclei_scheme.' '.
 							#							$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$body_scheme.' '.
 							#							$input_folder."/".$barcode."_".$letter.$number."_".$field."_".$extra_scheme.' '.
@@ -87,14 +76,14 @@ sub start_off_image_analysis {
 							#system('/usr/bin/hcell -f /Users/b110-mm06/Desktop/Projects/image_analysis/KristinasStuff/R_Files/EBImage_pipeline.R --slave --args '.$letter.$number.'fld1wvDAPIDAPI.tif '.$letter.$number.'fld1wvCy3Cy3.tif '.$letter.$number.'fld1wvCy5Cy5.tif'); 
 							#system('/usr/bin/CellProfiler -f /Users/b110-mm06/Desktop/Projects/image_analysis/KristinasStuff/R_Files/EBImage_pipeline.R --slave --args '.$letter.$number.'fld1wvDAPIDAPI.tif '.$letter.$number.'fld1wvCy3Cy3.tif '.$letter.$number.'fld1wvCy5Cy5.tif'); 
 					#$sub_pm->finish();
-				}elsif(-e $output_folder."/".$barcode."_".$letter.$number."_".$field.".tab"){
+				}elsif(-e $output_folder."/".$barcode."_".$letter.$number."_".$field.".qtab"){
 				
 					delete $Q{$key};
 				}
-				#sleep 1;
+				#sleep 3;
 			}
 			sleep 1;			
 			
 		}
-	#	$sub_pm->wait_all_children();
+		#$sub_pm->wait_all_children();
 }
