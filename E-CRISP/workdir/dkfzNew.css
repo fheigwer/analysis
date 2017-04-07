@@ -1,0 +1,248 @@
+
+#allcontent {
+      font-family: 'Open Sans', sans-serif;
+      width: 800px;
+      text-align: center;
+      /*font-family: Verdana, Arial, sans-serif;*/
+      font-size: 12px;
+      margin-left: auto;
+      margin-right: auto;
+}
+
+.main {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 12px; 
+      text-align: left;
+      vertical-align: text-top;
+      top: 0;
+      left: 0;
+}
+
+.main-button {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 12px;
+      vertical-align: text-top;
+      top: 0;
+      left: 0;
+}
+
+.main2 {
+      font-family: 'Open Sans', sans-serif;
+      text-align: justify;
+      font-size: 12px;
+      vertical-align: text-top;
+      top: 0px;
+      left: 0px;
+      line-height: 120%;
+      padding-top: 30px;
+      padding-right: 20px;
+      padding-bottom: 30px;
+      padding-left: 30px;
+      margin: 0px;
+}
+
+.main3 {
+      font-family: 'Open Sans', sans-serif;
+      text-align: justify;
+      font-size: 12px;
+      vertical-align: text-top;
+      top: 0px;
+      left: 0px;
+      line-height: 140%;
+      padding-top: 0px;
+      padding-right: 0px;
+      padding-bottom: 00px;
+      padding-left: 0px;
+      margin: 0px;
+}
+
+/*for e-crisp db*/
+.main4{
+      font-family: 'Open Sans', sans-serif;
+      font-size: 12px;
+      vertical-align: top;
+      text-align: left;
+      top: 0;
+      left: 0;  
+}
+/*end of for e-crisp db*/
+.news {
+      font-family: 'Open Sans', sans-serif;
+      border-bottom-style: dotted;
+      border-bottom-width: 1px;
+      font-weight: bold;
+}
+
+a:link {
+      color: #333;
+      font-family: 'Open Sans', sans-serif;
+      /*font-family: Verdana;*/
+      text-decoration: underline;
+}
+
+a:visited {
+      color: #333;
+      font-family: 'Open Sans', sans-serif;
+      /*font-family: Verdana;*/
+      text-decoration: underline;
+}
+
+.style6 {
+      font-family: 'Open Sans', sans-serif;
+        /* font-family: "Courier New", Courier, monospace;*/
+      font-size: 11px;
+}
+
+.style8 {
+      font-family: 'Open Sans', sans-serif;
+      color: #2662C3;
+}
+
+.style10 {
+      font-family: 'Open Sans', sans-serif;
+      /*font-family: Verdana, Arial, sans-serif;*/
+      font-size: 12px;
+      text-align: left;
+}
+
+/*for forum*/
+.style11 {
+       font-family: 'Open Sans', sans-serif;
+      /*font-family: Verdana, Arial, sans-serif;*/
+      font-size: 18px;
+}
+
+.style12 {
+      font-family: 'Open Sans', sans-serif;
+       /*font-family: Verdana, Arial, sans-serif;*/
+      font-size: 16px;
+      color: blue;
+}
+
+.style13 {
+      font-family: 'Open Sans', sans-serif;
+       /*font-family: Verdana, Arial, sans-serif;*/
+      font-size: 16px;
+}
+/*end of for forum*/
+
+.style14 {
+      font-family: 'Open Sans', sans-serif;
+      /*font-family: Verdana, Arial, sans-serif;*/
+      font-size: 24px;
+      text-align: left;
+}
+
+/*for header only*/
+.style15 {
+      font-family: Verdana, Arial, sans-serif;
+      font-size: 28.82px;
+      text-align: left;
+}
+
+.style16 {
+      font-family: Verdana, Arial, sans-serif;
+      font-size: 12px;
+      text-align: left;
+}
+
+.style17 {
+      font-family: Verdana, Arial, sans-serif;
+      font-size: 16px;
+      text-align: left;
+      color: blue;      
+}
+
+.caption {
+       font-family: 'Open Sans', sans-serif;
+      float: left;
+}
+
+.caption img, .caption label {
+       font-family: 'Open Sans', sans-serif;
+      display: block;
+}
+
+.errormessage {
+       font-family: 'Open Sans', sans-serif;
+      line-height: 20px;
+      font-size: 12px;
+      color: red;
+}
+
+.good {
+       font-family: 'Open Sans', sans-serif;
+      border-bottom:thin solid;
+      border-spacing: 0;
+      border-color:lightgreen;
+}
+
+.bad {
+       font-family: 'Open Sans', sans-serif;
+      border-bottom:thin solid;
+      border-spacing: 0;
+      border-color:pink;
+}
+
+.date {
+       font-family: 'Open Sans', sans-serif;
+    	width: 20%;
+    	text-align: left;
+    	 vertical-align: middle;
+}
+.update {
+       font-family: 'Open Sans', sans-serif;
+       width: 80%;
+       text-align: left;
+       vertical-align: middle;
+}
+
+.clickable { 
+	cursor: pointer;
+}
+.clickable:hover { 
+	color: blue;  
+	}
+.clickableplus { 
+	cursor: pointer;  
+	}
+.clickableplus:hover { 
+	color: blue; 
+	 }
+a:link {
+		color: black;
+		font-family: 'Open Sans', sans-serif;
+		text-decoration:none;
+}		
+a:visited {
+		color: black;
+		font-family: 'Open Sans', sans-serif;
+		text-decoration:none;
+}
+div.htmltooltip{
+		position: absolute; /*leave this and next 3 values alone*/
+		z-index: 1000;
+		left: -1000px;
+		top: -1000px;
+		background: white;
+		border: 1px dashed black;
+		color: #2662C3;
+		padding: 10px;
+		text-align: left;
+		font-family: Verdana, Arial, sans-serif;
+		font-size: 11px;
+		width: auto; /*width of tooltip*/
+	}
+td.element{
+	border:1px solid black;
+	vertical-align: top;
+	padding:5px; 
+	text-align: left;
+	}
+td.header{
+	border:1px solid black;
+	vertical-align: top;
+	padding:5px; 
+	text-align: center;
+	background:#E0E0E0 ;
+	}

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="enc">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta name="google-site-verification" content="W45nkFOgonAoBHyRWAdcbuiUf0voZGgc9gEzW6WeZcA" />
+<title>E-CRISP Results</title>
+<link rel="stylesheet" type="text/css" media="screen" href="../../dkfzNew.css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="parameter_presets.js"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="../jquery-ui-1.10.4/css/smoothness/jquery-ui-1.10.4.custom.min.css">
+<script type="text/javascript" src="../jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="../jquery-ui-1.10.4/js/jquery-ui-1.10.4.custom.min.js"></script>
+<script>
+            $(function() {
+                  $( ".dialog" ).dialog({
+                        autoOpen: false,
+                        width: 1150,
+                        resizable: false,
+                        show: {
+                              effect: "scale",
+                              duration: 500
+                        },
+                        hide: {
+                              effect: "scale",
+                              duration: 500
+                        },
+                        buttons: {
+                              "Close": function() {
+                                    $( this ).dialog( "close" );
+                              }
+                        }
+                  });
+                  $( ".opener" ).click(function() {
+                        $( "#dialog_"+$(this).attr('id') ).dialog( "open" );
+                  });
+            });
+      </script>
+      <script>
+            if( gaanonym.switcher.isActive() ) {
+                  var _gaq = _gaq || [];
+                  _gaq.push(['_setAccount', 'UA-XXXXXXX-X']);
+                  _gaq.push(['_gat._anonymizeIp']);
+                  _gaq.push(['_trackPageview']);
+                  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                  m=s.getElementsByTagName(o)[0];a.async=1;aip=1;a.src=g;m.parentNode.insertBefore(a,m)
+                  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+                  ga('create', 'UA-41305712-1', 'e-crisp.org');
+                  ga('send', 'pageview');
+            }
+      </script>
+      <script>
+            function findPos(obj) {
+                var curtop = 0;
+                if (obj.offsetParent) {
+                    do {
+                        curtop += obj.offsetTop;
+                    } while (obj = obj.offsetParent);
+                return [curtop];
+                }
+            }
+            function svgElementClicked(theElement){
+                  //document.getElementById(theElement).scrollIntoView();
+                  var offset = $(document.getElementById(theElement)).offset();
+                  $('html, body').animate({
+                        scrollTop: offset.top - 10,
+                        scrollLeft: offset.left - 10
+                  });
+              
+            }
+            // A $( document ).ready() block.
+            
+            $(window).load(function () {
+                  var mySvg = document.getElementById("myEmbed");
+                  $(".talenHits tr.entry td.main").click(function () {
+                        var ID=$(this).parent().attr('id');
+                        var elems = document.getElementsByTagName('object');
+                        for (i in elems) {
+                              var temp=elems[i].contentDocument.getElementById(ID);
+                              if (temp != null){
+                                    //temp.scrollIntoView();
+                                    var svgTop = $(elems[i]).offset().top;
+                                    var offset = $(temp).offset();
+                                    $('html, body').animate({
+                                          scrollTop: offset.top + svgTop - 10,
+                                          scrollLeft: offset.left - 10
+                                    });
+                                    return;
+                              }
+                        }
+                  });
+            });
+      </script>
+</head>
+<body>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<div id="allcontent">
+<!--start new header-->
+                <table style="width: 800px; height: auto; font-size: 12px;margin-left: auto;">
+                        <tbody><tr>
+                                <td style="width: 60%; text-align: left;">
+                                        <a class="style15" href="http://www.e-crisp.org/index.html">E-CRISP</a><br>
+                                        <span class="style16">  Design of CRISPR constructs</span>
+                                </td>
+                                <td style="width: 40%; text-align: left; vertical-align: middle;">
+                                        <a href="http://www.dkfz.de/de/index.html"><img alt="DKFZ" src="http://www.e-crisp.org/dkfz_icon.svg" width="250"></a>
+                                </td>
+                        </tr>
+                </tbody></table>
+
+                <style>
+
+                        td.header{      border:0px;
+                                                background-color: #2662C3;
+                                                font-family: Verdana, Arial, sans-serif;
+                                        font-size: 16px;
+                                        text-align: center;
+                                        border-radius: 5px
+                                }
+                        td.header:hover{background-color: #5692F3;}
+
+                </style>
+
+                <table cellspacing=0 style="width: 800px; height: auto; table-layout: fixed; border-radius: 7px; padding: 0px; background-color: #2662C3; vertical-align: middle;margin-left: auto;">
+                        <tbody><tr style="height:32px">
+                                <td class="header" style="padding: 0px; vertical-align: middle;"><a href="http://www.e-crisp.org/index.html" style="color: white;">Design</a></td>
+                                <td class="header" style="padding: 0px; vertical-align: middle;"><a href="http://www.e-crisp.org/reannotate_crispr.html" style="color: white;">Evaluation</a></td>
+                                <td class="header" style="padding: 0px; vertical-align: middle;"><a href="http://www.e-crisp.org/SeqAlign.html" style="color: white;">MultiCRISP</a></td>
+                                <td class="style17" style="width: 10%; padding: 0px; vertical-align: middle;"></td>
+                                <td class="header" style="padding: 0px; vertical-align: middle;"><a href="http://www.genomecrispr.org" style="color: white;">GenomeCRISPR</a></td>
+                                <td class="header" style="padding: 0px; vertical-align: middle;"><a href="http://www.e-crisp.org/aboutpage.html" style="color: white;">Help</a></td>
+                                <td class="header" style="padding: 0px; vertical-align: middle;"><a href="http://www.e-crisp.org/links.html" style="color: white;">Links</a></td>
+                        </tr>
+                </tbody></table>
+<!--end new header-->
+<table style="height: auto; width: 800px;" class="main">
+  <tbody>
+	<tr>
+	<td>

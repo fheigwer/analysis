@@ -1,3 +1,0 @@
-classify_every_object<-function(plate="10301")
-)
-classify_every_object(plate="10301")
